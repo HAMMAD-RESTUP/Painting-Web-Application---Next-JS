@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+/* PP Playground */
+@font-face {
+  font-family: "PP Playground";
+  src: url("/fonts/PPPlayground-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* PP Hatton Medium */
+@font-face {
+  font-family: "PP Hatton";
+  src: url("/fonts/PPHatton-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  --primary-colors--ochre: #bf9615;
+  --primary-colors--dirty-white: #ededed;
+  --color-scheme-1--dark-grey: #1e1e1c;
+
+  --_typography---font-styles--body: var(--font-figtree), sans-serif;
+  --_typography---font-styles--heading: "PP Hatton", "Times New Roman", serif;
+  --_typography---font-styles--special: "PP Playground", "Times New Roman", serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --font-body: var(--_typography---font-styles--body);
+  --font-heading: var(--_typography---font-styles--heading);
+  --font-special: var(--_typography---font-styles--special);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--_typography---font-styles--body);
+}
+
+.special-text {
+  font-family: var(--_typography---font-styles--special);
+  font-size: 9.5rem;
+  font-weight: 500;
+  line-height: 0.65;
+  display: inline-block;
+  overflow: visible;
+}
+
+.heading-text {
+  font-family: var(--_typography---font-styles--heading);
+  font-weight: 500;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes insta-slide {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-insta-slide {
+  animation: insta-slide 28s linear infinite;
+}
+
+/* ── Home page experience ── */
+
+html.home-custom-cursor,
+html.home-custom-cursor * {
+  cursor: none !important;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee-scroll 32s linear infinite;
+}
+
+.home-grain {
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+
+  html.home-custom-cursor,
+  html.home-custom-cursor * {
+    cursor: auto !important;
+  }
+
+  .home-grain {
+    display: none;
+  }
+}
+
+/* Smooth scroll on home only */
+.home-experience {
+  scroll-behavior: smooth;
+}
+
