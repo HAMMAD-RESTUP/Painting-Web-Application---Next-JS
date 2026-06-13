@@ -14,22 +14,27 @@ import {
   RefreshCcw,
   Clock3,
 } from "lucide-react";
+import { useLogin, useLoginVerifyOtp } from "../hooks/useAuth";
 
 export default function LoginPage() {
   const router = useRouter();
   const inputRefs = useRef([]);
 
+  const loginMutation = useLogin();
+  const verifyLoginOtpMutation = useLoginVerifyOtp();
+
   const [step, setStep] = useState("email");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [secondsLeft, setSecondsLeft] = useState(300);
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const DEMO_CODE = "123456";
   const code = otp.join("");
   const isExpired = secondsLeft <= 0;
+
+  const isSendingOtp = loginMutation.isPending;
+  const isVerifyingOtp = verifyLoginOtpMutation.isPending;
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
@@ -81,7 +86,6 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (step !== "code") return;
-
     if (secondsLeft <= 0) return;
 
     const timer = setInterval(() => {
@@ -112,8 +116,9 @@ export default function LoginPage() {
     setError("");
   };
 
-  const handleEmailSubmit = async (e) => {
+  const handleEmailSubmit = (e) => {
     e.preventDefault();
+
     setError("");
     setMessage("");
 
@@ -127,27 +132,22 @@ export default function LoginPage() {
       return;
     }
 
-    try {
-      setLoading(true);
-
-      /*
-        Backend integration:
-
-        await API.post("/auth/send-code", {
-          email,
-        });
-      */
-
-      setTimeout(() => {
-        setLoading(false);
-        setStep("code");
-        resetOtp();
-        setMessage("OTP has been sent to your email.");
-      }, 800);
-    } catch (err) {
-      setLoading(false);
-      setError("Something went wrong. Please try again.");
-    }
+    loginMutation.mutate(
+      { email },
+      {
+        onSuccess: (data) => {
+          setStep("code");
+          resetOtp();
+          setMessage(data?.message || "OTP has been sent to your email.");
+        },
+        onError: (error) => {
+          setError(
+            error?.response?.data?.message ||
+              "Login failed. Please check your email."
+          );
+        },
+      }
+    );
   };
 
   const handleOtpChange = (index, value) => {
@@ -213,8 +213,9 @@ export default function LoginPage() {
     inputRefs.current[focusIndex]?.focus();
   };
 
-  const handleCodeSubmit = async (e) => {
+  const handleCodeSubmit = (e) => {
     e.preventDefault();
+
     setError("");
     setMessage("");
 
@@ -228,59 +229,68 @@ export default function LoginPage() {
       return;
     }
 
-    try {
-      setLoading(true);
-
-      /*
-        Backend integration:
-
-        const res = await API.post("/auth/verify-code", {
-          email,
-          code,
-        });
-
-        localStorage.setItem("token", res.data.token);
-        router.push(getRedirectPath());
-      */
-
-      setTimeout(() => {
-        if (code === DEMO_CODE) {
+    verifyLoginOtpMutation.mutate(
+      {
+        email,
+        otp: code,
+      },
+      {
+        onSuccess: (data) => {
           const redirectPath = getRedirectPath();
 
           localStorage.setItem("isLoggedIn", "true");
           localStorage.setItem("loggedInEmail", email);
           localStorage.setItem("loginTime", new Date().toISOString());
 
-          if (redirectPath.startsWith("/course/learning")) {
+          const token = data?.token || data?.accessToken;
+
+          if (token) {
+            localStorage.setItem("token", token);
+          }
+
+          if (data?.user) {
+            localStorage.setItem("user", JSON.stringify(data.user));
+          }
+
+          if (redirectPath.startsWith("/courses/learning")) {
             addDemoLearningAccess();
           }
 
           router.push(redirectPath);
-        } else {
-          setLoading(false);
-          setError("Invalid OTP. For frontend demo use 123456.");
-        }
-      }, 900);
-    } catch (err) {
-      setLoading(false);
-      setError("Invalid or expired OTP.");
-    }
+        },
+        onError: (error) => {
+          setError(error?.response?.data?.message || "Invalid or expired OTP.");
+        },
+      }
+    );
   };
 
   const handleResendCode = () => {
-    /*
-      Backend integration:
+    setError("");
+    setMessage("");
 
-      await API.post("/auth/send-code", {
-        email,
-      });
-    */
+    if (!email) {
+      setError("Email is missing. Please enter email again.");
+      setStep("email");
+      return;
+    }
 
-    resetOtp();
-    setMessage("A new OTP has been sent.");
-    setTimeout(() => {
-      inputRefs.current[0]?.focus();
-    }, 100);
+    loginMutation.mutate(
+      { email },
+      {
+        onSuccess: (data) => {
+          resetOtp();
+          setMessage(data?.message || "A new OTP has been sent.");
+
+          setTimeout(() => {
+            inputRefs.current[0]?.focus();
+          }, 100);
+        },
+        onError: (error) => {
+          setError(error?.response?.data?.message || "Could not resend OTP.");
+        },
+      }
+    );
   };
 
   const handleChangeEmail = () => {
@@ -699,21 +709,6 @@ export default function LoginPage() {
           border: 1px solid #f2cfc7;
         }
 
-        .demo-note {
-          margin-top: 22px;
-          padding: 16px;
-          border-radius: 18px;
-          background: #fbf7f2;
-          border: 1px dashed #d7c7b8;
-          color: #7d7168;
-          font-size: 13px;
-          line-height: 1.7;
-        }
-
-        .demo-note strong {
-          color: #292724;
-        }
-
         .spin {
           animation: spin 900ms linear infinite;
         }
@@ -858,8 +853,12 @@ export default function LoginPage() {
                     </div>
                   </div>
 
-                  <button type="submit" className="primary-btn" disabled={loading}>
-                    {loading ? (
+                  <button
+                    type="submit"
+                    className="primary-btn"
+                    disabled={isSendingOtp}
+                  >
+                    {isSendingOtp ? (
                       <>
                         <Loader2 size={17} className="spin" />
                         Sending OTP
@@ -910,7 +909,7 @@ export default function LoginPage() {
                           type="text"
                           inputMode="numeric"
                           maxLength={1}
-                          disabled={isExpired || loading}
+                          disabled={isExpired || isVerifyingOtp}
                           className="otp-input"
                           value={digit}
                           onChange={(e) =>
@@ -925,9 +924,9 @@ export default function LoginPage() {
                   <button
                     type="submit"
                     className="primary-btn"
-                    disabled={loading || isExpired}
+                    disabled={isVerifyingOtp || isExpired}
                   >
-                    {loading ? (
+                    {isVerifyingOtp ? (
                       <>
                         <Loader2 size={17} className="spin" />
                         Verifying
@@ -955,13 +954,12 @@ export default function LoginPage() {
                     type="button"
                     className="text-btn"
                     onClick={handleResendCode}
+                    disabled={isSendingOtp}
                   >
                     <RefreshCcw size={14} />
                     Resend OTP
                   </button>
                 </div>
-
-       
               </>
             )}
 

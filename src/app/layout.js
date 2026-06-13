@@ -1,4 +1,6 @@
 import { Cormorant_Garamond } from "next/font/google";
+import ReactQueryProvider from "./providers/ReactQueryProvider";
+
 import Navbar from "./Components/common/Navbar";
 import Footer from "./Components/common/Footer";
 import "./globals.css";
@@ -24,7 +26,7 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col bg-[#f7f1e8] text-[#17120d]">
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <ReactQueryProvider>{children}</ReactQueryProvider>
         <Footer />
       </body>
     </html>
