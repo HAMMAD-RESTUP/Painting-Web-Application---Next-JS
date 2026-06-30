@@ -1,0 +1,244 @@
+@import "tailwindcss";
+
+/* --------------------------------------------------------------------------
+   Theme and typography
+---------------------------------------------------------------------------- */
+
+:root {
+  --background: #fffdfb;
+  --foreground: #171717;
+
+  --font-figtree: "Figtree", Arial, Helvetica, sans-serif;
+  --font-cormorant: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+
+  --site-font-body: var(--font-figtree);
+  --site-font-heading: var(--font-cormorant);
+  --site-font-special: var(--font-cormorant);
+
+  --primary-colors--ochre: #bf9615;
+  --primary-colors--dirty-white: #ededed;
+  --color-scheme-1--dark-grey: #1e1e1c;
+  --ziina-purple: #6d2cff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --font-sans: var(--font-figtree);
+  --font-serif: var(--font-cormorant);
+  --font-body: var(--site-font-body);
+  --font-heading: var(--site-font-heading);
+  --font-special: var(--site-font-special);
+}
+
+/* --------------------------------------------------------------------------
+   Base
+---------------------------------------------------------------------------- */
+
+html {
+  min-height: 100%;
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--site-font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: rgba(111, 85, 67, 0.2);
+  color: #3b2f2a;
+}
+
+:focus-visible {
+  outline: 2px solid #8b6a53;
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   Typography utilities used by the existing UI
+---------------------------------------------------------------------------- */
+
+.font-sans,
+.font-body {
+  font-family: var(--site-font-body);
+}
+
+.font-serif,
+.font-heading,
+.heading-text {
+  font-family: var(--site-font-heading);
+}
+
+.font-special,
+.special-text {
+  font-family: var(--site-font-special);
+}
+
+.heading-text {
+  font-weight: 400;
+}
+
+.special-text {
+  display: inline-block;
+  overflow: visible;
+  font-size: 9.5rem;
+  font-weight: 500;
+  line-height: 0.65;
+}
+
+/* --------------------------------------------------------------------------
+   Shared animation utilities
+---------------------------------------------------------------------------- */
+
+@keyframes insta-slide {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-insta-slide {
+  animation: insta-slide 28s linear infinite;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee-scroll 28s linear infinite;
+}
+
+.home-experience {
+  scroll-behavior: smooth;
+}
+
+.home-grain {
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitchTiles'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+}
+
+/* --------------------------------------------------------------------------
+   Painting commerce details
+---------------------------------------------------------------------------- */
+
+.commerce-shell {
+  background:
+    radial-gradient(circle at 88% 8%, rgba(197, 139, 50, 0.1), transparent 25%),
+    linear-gradient(180deg, #fffaf3 0%, #f7efe5 100%);
+}
+
+.product-media-frame {
+  border: 1px solid #ded4c8;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(37, 26, 17, 0.1);
+}
+
+.product-media-frame img {
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.product-media-frame:hover img {
+  transform: scale(1.025);
+}
+
+.ziina-button {
+  border-color: var(--ziina-purple) !important;
+  background: linear-gradient(135deg, #6f35cc 0%, #4a1d91 100%) !important;
+  box-shadow: 0 14px 32px rgba(93, 46, 166, 0.26);
+}
+
+.ziina-button:hover {
+  filter: brightness(1.07);
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive typography
+---------------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .special-text {
+    font-size: 7rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .special-text {
+    font-size: 5rem;
+    line-height: 0.72;
+  }
+}
+
+@media (max-width: 480px) {
+  .special-text {
+    font-size: 4rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Accessibility
+---------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-marquee,
+  .animate-insta-slide {
+    animation: none;
+  }
+
+  .home-grain {
+    display: none;
+  }
+}
