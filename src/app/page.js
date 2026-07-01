@@ -14,8 +14,8 @@ export default function Home() {
     <HomeExperience>
       <HeroSection />
       <MarqueeDivider />
-      <StudioStats />
       <ScrollShowcase />
+      <StudioStats />
       <CollaboratorsSection />
       <LineageSection />
       <MarqueeDivider />

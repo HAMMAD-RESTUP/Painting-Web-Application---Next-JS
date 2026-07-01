@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useInView,
+  useReducedMotion,
+} from "framer-motion";
 
 const STATS = [
   {
@@ -31,67 +35,21 @@ export default function StudioStats() {
     <section
       id="studio-stats"
       aria-label="Studio highlights"
-      className="
-        relative
-        isolate
-        scroll-mt-28
-        overflow-hidden
-        bg-[#f7f3ee]
-        py-12
-        sm:py-14
-        lg:py-16
-      "
+      className="relative isolate scroll-mt-28 overflow-hidden bg-[#f7f3ee] py-12 sm:py-14 lg:py-16"
     >
       {/* Decorative background */}
       <div
         aria-hidden="true"
-        className="
-          pointer-events-none
-          absolute
-          -left-24
-          top-1/2
-          -z-10
-          h-64
-          w-64
-          -translate-y-1/2
-          rounded-full
-          bg-[#d9b99f]/10
-          blur-3xl
-        "
+        className="pointer-events-none absolute -left-24 top-1/2 -z-10 h-64 w-64 -translate-y-1/2 rounded-full bg-[#d9b99f]/10 blur-3xl"
       />
 
       <div
         aria-hidden="true"
-        className="
-          pointer-events-none
-          absolute
-          -right-24
-          top-1/2
-          -z-10
-          h-64
-          w-64
-          -translate-y-1/2
-          rounded-full
-          bg-[#c9b8a7]/10
-          blur-3xl
-        "
+        className="pointer-events-none absolute -right-24 top-1/2 -z-10 h-64 w-64 -translate-y-1/2 rounded-full bg-[#c9b8a7]/10 blur-3xl"
       />
 
       <div className="mx-auto max-w-[1240px] px-5 sm:px-8 lg:px-10">
-        <div
-          className="
-            grid
-            grid-cols-2
-            overflow-hidden
-            rounded-[24px]
-            bg-white/35
-            ring-1
-            ring-[#dfd2c4]/55
-            backdrop-blur-sm
-            sm:grid-cols-4
-            sm:rounded-[28px]
-          "
-        >
+        <div className="grid grid-cols-2 overflow-hidden rounded-[24px] bg-white/35 backdrop-blur-sm sm:grid-cols-4 sm:rounded-[28px]">
           {STATS.map((stat, index) => (
             <StatItem
               key={stat.label}
@@ -133,9 +91,12 @@ function StatItem({ stat, index }) {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
 
-      const easedProgress = 1 - Math.pow(1 - progress, 4);
+      const easedProgress =
+        1 - Math.pow(1 - progress, 4);
 
-      setCount(Math.round(stat.value * easedProgress));
+      setCount(
+        Math.round(stat.value * easedProgress)
+      );
 
       if (progress < 1) {
         animationFrameRef.current =
@@ -148,17 +109,16 @@ function StatItem({ stat, index }) {
 
     return () => {
       if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
+        cancelAnimationFrame(
+          animationFrameRef.current
+        );
       }
     };
-  }, [isInView, shouldReduceMotion, stat.value]);
-
-  const borderClasses = [
-    "border-b border-r border-[#dfd2c4]/55 sm:border-b-0",
-    "border-b border-[#dfd2c4]/55 sm:border-b-0 sm:border-r",
-    "border-r border-[#dfd2c4]/55",
-    "",
-  ][index];
+  }, [
+    isInView,
+    shouldReduceMotion,
+    stat.value,
+  ]);
 
   return (
     <motion.div
@@ -181,87 +141,31 @@ function StatItem({ stat, index }) {
         amount: 0.45,
       }}
       transition={{
-        delay: shouldReduceMotion ? 0 : index * 0.09,
+        delay: shouldReduceMotion
+          ? 0
+          : index * 0.09,
         duration: 0.65,
         ease: [0.22, 1, 0.36, 1],
       }}
-      className={`
-        group
-        relative
-        flex
-        min-h-[145px]
-        flex-col
-        items-center
-        justify-center
-        px-3
-        py-8
-        text-center
-        transition-colors
-        duration-300
-        sm:min-h-[165px]
-        sm:px-5
-        lg:min-h-[180px]
-        ${borderClasses}
-      `}
+      className="group relative flex min-h-[145px] flex-col items-center justify-center px-3 py-8 text-center transition-colors duration-300 sm:min-h-[165px] sm:px-5 lg:min-h-[180px]"
     >
-      {/* Small decorative line */}
       <span
         aria-hidden="true"
-        className="
-          mb-5
-          h-px
-          w-7
-          bg-[#b07f59]/60
-          transition-all
-          duration-300
-          group-hover:w-10
-        "
+        className="mb-5 h-px w-7 bg-[#b07f59]/60 transition-all duration-300 group-hover:w-10"
       />
 
       <p
         aria-hidden="true"
-        className="
-          min-w-[110px]
-          whitespace-nowrap
-          font-special
-          text-[42px]
-          font-normal
-          italic
-          leading-none
-          tracking-[-0.045em]
-          text-[#302922]
-          [font-variant-numeric:tabular-nums]
-          sm:text-[50px]
-          lg:text-[58px]
-        "
+        className="min-w-[110px] whitespace-nowrap font-special text-[42px] font-normal italic leading-none tracking-[-0.045em] text-[#302922] [font-variant-numeric:tabular-nums] sm:text-[50px] lg:text-[58px]"
       >
         {count.toLocaleString()}
 
-        <span
-          className="
-            ml-0.5
-            text-[0.58em]
-            not-italic
-            text-[#b07f59]
-          "
-        >
+        <span className="ml-0.5 text-[0.58em] not-italic text-[#b07f59]">
           {stat.suffix}
         </span>
       </p>
 
-      <p
-        className="
-          mt-4
-          whitespace-nowrap
-          text-[9px]
-          font-semibold
-          uppercase
-          tracking-[0.22em]
-          text-[#806653]
-          sm:text-[10px]
-          sm:tracking-[0.25em]
-        "
-      >
+      <p className="mt-4 whitespace-nowrap text-[9px] font-semibold uppercase tracking-[0.22em] text-[#806653] sm:text-[10px] sm:tracking-[0.25em]">
         {stat.label}
       </p>
     </motion.div>

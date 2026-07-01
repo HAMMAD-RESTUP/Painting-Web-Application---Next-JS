@@ -31,7 +31,7 @@ import HeroPaintCanvas from "./HeroPaintCanvas";
 
 const SLIDES = [
   {
-    image: "/images/banner2.png",
+    image: "/images/banner3.png",
 
     titlePart1: "Rakhshinda",
     titlePart2: "Art",
