@@ -250,10 +250,10 @@ export default function FeaturedArtworksSection() {
       </div>
 
       {/* Bottom banners */}
-      <div className="relative z-10 grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="relative z-10 grid grid-cols-1 gap-0 md:grid-cols-2">
         <FeatureBanner
-          href="/shop/prints"
-          image="/images/limited-prints.png"
+          href="/shop"
+          image="/images/limited-prints.jpg"
           label="Fine Art Prints"
           title="Limited Edition Prints"
           text="Premium archival-quality prints designed for calm homes, meaningful gifts and elegant wall spaces."
@@ -261,8 +261,8 @@ export default function FeaturedArtworksSection() {
         />
 
         <FeatureBanner
-          href="/shop/calligraphy-kit"
-          image="/images/calligraphy-bg.png"
+          href="/shop"
+          image="/images/paintings.jpg"
           label="Creative Kit"
           title="Calligraphy Kit"
           text="A thoughtful starter kit with essential tools to begin your calligraphy practice with confidence."
