@@ -175,9 +175,7 @@ export default function HeroSection() {
       id="hero"
       ref={sectionRef}
       onMouseMove={handleMouseMove}
-      onMouseLeave={
-        handleMouseLeave
-      }
+      onMouseLeave={handleMouseLeave}
       aria-label="Original art for meaningful spaces"
       className="
         hero-section
@@ -191,9 +189,10 @@ export default function HeroSection() {
       <div
         className="
           relative
-          min-h-[620px]
+          min-h-[590px]
           w-full
 
+          min-[390px]:min-h-[620px]
           sm:min-h-[640px]
           md:min-h-[650px]
           lg:min-h-[680px]
@@ -262,12 +261,17 @@ export default function HeroSection() {
                   h-full
                   w-full
                   object-cover
-                  object-[66%_center]
+                  object-[64%_center]
                   brightness-[1.02]
-                  contrast-[1.02]
-                  saturate-[1.04]
+                  contrast-[0.98]
+                  saturate-[0.86]
 
-                  sm:object-[64%_center]
+                  min-[390px]:object-[63%_center]
+                  min-[390px]:saturate-[0.88]
+
+                  sm:object-[61%_center]
+                  sm:saturate-[0.91]
+
                   md:hidden
                 "
               />
@@ -339,7 +343,7 @@ export default function HeroSection() {
           "
         />
 
-        {/* Mobile Transparent Dark Overlay */}
+        {/* Mobile Left Overlay */}
         <div
           aria-hidden="true"
           className="
@@ -348,25 +352,43 @@ export default function HeroSection() {
             inset-0
             z-[1]
             bg-gradient-to-r
-            from-black/35
-            via-black/25
+            from-[#f7f1e8]/90
+            via-[#f7f1e8]/58
             to-transparent
             md:hidden
           "
         />
 
-        {/* Mobile Top Transparent Support */}
+        {/* Mobile Local Text Support */}
+        <div
+          aria-hidden="true"
+          className="
+            pointer-events-none
+            absolute
+            inset-y-0
+            left-0
+            z-[1]
+            w-[72%]
+            bg-gradient-to-r
+            from-[#f7f1e8]/22
+            to-transparent
+            md:hidden
+          "
+        />
+
+        {/* Mobile Bottom Blend */}
         <div
           aria-hidden="true"
           className="
             pointer-events-none
             absolute
             inset-x-0
-            top-0
+            bottom-0
             z-[1]
-            h-[20%]
-            bg-gradient-to-b
-            from-black/15
+            h-[24%]
+            bg-gradient-to-t
+            from-[#f7f1e8]/65
+            via-[#f7f1e8]/12
             to-transparent
             md:hidden
           "
@@ -388,24 +410,6 @@ export default function HeroSection() {
             via-[#f7f1e8]/18
             to-transparent
             md:block
-          "
-        />
-
-        {/* Mobile Bottom Transparent Gradient */}
-        <div
-          aria-hidden="true"
-          className="
-            pointer-events-none
-            absolute
-            inset-x-0
-            bottom-0
-            z-[1]
-            h-[30%]
-            bg-gradient-to-t
-            from-black/30
-            via-black/10
-            to-transparent
-            md:hidden
           "
         />
 
@@ -505,11 +509,15 @@ export default function HeroSection() {
             z-10
             mx-auto
             flex
-            min-h-[620px]
+            min-h-[590px]
             max-w-[1440px]
             items-center
             px-5
-            py-14
+            pb-12
+            pt-24
+
+            min-[390px]:min-h-[620px]
+            min-[390px]:pt-28
 
             sm:min-h-[640px]
             sm:px-9
@@ -547,7 +555,6 @@ export default function HeroSection() {
                 }}
                 transition={{
                   duration: 0.65,
-
                   ease: [
                     0.22,
                     1,
@@ -563,25 +570,20 @@ export default function HeroSection() {
                     max-w-[680px]
                     font-normal
                     italic
-                    leading-[0.84]
-                    tracking-[-0.055em]
+                    leading-[0.86]
+                    tracking-[-0.05em]
                   "
                 >
                   <span
                     className="
                       block
                       overflow-hidden
-                      text-[54px]
-                      text-white
-                      drop-shadow-[0_3px_15px_rgba(0,0,0,0.30)]
+                      text-[46px]
+                      text-[#3b2f2a]
 
-                      min-[375px]:text-[59px]
-                      sm:text-[76px]
-
+                      min-[375px]:text-[52px]
+                      sm:text-[72px]
                       md:text-[88px]
-                      md:text-[#3b2f2a]
-                      md:drop-shadow-none
-
                       lg:text-[100px]
                       xl:text-[112px]
                     "
@@ -601,17 +603,12 @@ export default function HeroSection() {
                       mt-1
                       block
                       overflow-hidden
-                      text-[54px]
-                      text-[#edc08c]
-                      drop-shadow-[0_3px_15px_rgba(0,0,0,0.30)]
+                      text-[46px]
+                      text-[#b07f59]
 
-                      min-[375px]:text-[59px]
-                      sm:text-[76px]
-
+                      min-[375px]:text-[52px]
+                      sm:text-[72px]
                       md:text-[88px]
-                      md:text-[#b07f59]
-                      md:drop-shadow-none
-
                       lg:text-[100px]
                       xl:text-[112px]
                     "
@@ -643,7 +640,6 @@ export default function HeroSection() {
                   transition={{
                     delay: 0.32,
                     duration: 0.7,
-
                     ease: [
                       0.22,
                       1,
@@ -652,12 +648,14 @@ export default function HeroSection() {
                     ],
                   }}
                   className="
-                    mt-6
+                    mt-5
                     h-px
-                    w-[78px]
+                    w-[66px]
                     origin-left
-                    bg-[#edc08c]
-                    md:bg-[#b07f59]
+                    bg-[#b07f59]/85
+
+                    sm:mt-6
+                    sm:w-[78px]
                   "
                 />
 
@@ -680,19 +678,22 @@ export default function HeroSection() {
                     duration: 0.55,
                   }}
                   className="
-                    mt-5
-                    max-w-[480px]
-                    text-[14px]
-                    leading-7
-                    text-white/90
-                    drop-shadow-[0_2px_10px_rgba(0,0,0,0.40)]
+                    mt-4
+                    max-w-[305px]
+                    text-[13px]
+                    leading-6
+                    text-[#4f453d]
 
-                    sm:max-w-[610px]
+                    min-[390px]:max-w-[345px]
+                    min-[390px]:text-[14px]
+                    min-[390px]:leading-7
+
+                    sm:mt-5
+                    sm:max-w-[540px]
                     sm:text-[15px]
 
+                    md:max-w-[610px]
                     md:text-[16px]
-                    md:text-[#433931]
-                    md:drop-shadow-none
 
                     lg:text-[17px]
                     lg:leading-8
@@ -724,11 +725,14 @@ export default function HeroSection() {
                 duration: 0.55,
               }}
               className="
-                mt-7
+                mt-6
                 flex
                 flex-col
-                gap-3
-                sm:flex-row
+                gap-2.5
+
+                min-[470px]:flex-row
+                sm:mt-7
+                sm:gap-3
               "
             >
               <MagneticLink
@@ -739,7 +743,7 @@ export default function HeroSection() {
                 className="
                   group
                   inline-flex
-                  min-h-[50px]
+                  min-h-[46px]
                   w-full
                   items-center
                   justify-center
@@ -748,24 +752,29 @@ export default function HeroSection() {
                   border
                   border-[#6f5543]
                   bg-[#6f5543]
-                  px-7
-                  text-[10px]
+                  px-6
+                  text-[9px]
                   font-semibold
                   uppercase
-                  tracking-[0.15em]
+                  tracking-[0.13em]
                   text-white
-                  shadow-[0_10px_24px_rgba(75,50,35,0.16)]
+                  shadow-[0_8px_18px_rgba(75,50,35,0.14)]
                   transition
                   duration-300
 
                   hover:border-[#b07f59]
                   hover:bg-[#b07f59]
-                  hover:shadow-[0_10px_25px_rgba(176,127,89,0.24)]
 
-                  sm:w-auto
+                  min-[470px]:w-auto
+                  min-[470px]:px-7
+
+                  sm:min-h-[50px]
                   sm:px-8
+                  sm:text-[10px]
+                  sm:tracking-[0.15em]
 
                   md:text-[11px]
+                  md:shadow-[0_10px_24px_rgba(75,50,35,0.16)]
                 "
               >
                 Explore Artwork
@@ -789,41 +798,41 @@ export default function HeroSection() {
                 className="
                   group
                   inline-flex
-                  min-h-[50px]
+                  min-h-[46px]
                   w-full
                   items-center
                   justify-center
                   gap-2
                   rounded-md
                   border
-                  border-white/45
-                  bg-black/20
-                  px-7
-                  text-[10px]
+                  border-[#6f5543]/25
+                  bg-[#fffdfb]/72
+                  px-6
+                  text-[9px]
                   font-semibold
                   uppercase
-                  tracking-[0.15em]
-                  text-white
-                  shadow-[0_8px_20px_rgba(0,0,0,0.12)]
-                  backdrop-blur-sm
+                  tracking-[0.13em]
+                  text-[#51473f]
+                  shadow-[0_6px_16px_rgba(75,50,35,0.06)]
+                  backdrop-blur-[2px]
                   transition
                   duration-300
 
-                  hover:border-white/70
-                  hover:bg-black/35
+                  hover:border-[#b07f59]
+                  hover:bg-[#f8efe8]
+                  hover:text-[#b07f59]
 
-                  sm:w-auto
+                  min-[470px]:w-auto
+                  min-[470px]:px-7
+
+                  sm:min-h-[50px]
+                  sm:bg-[#fffdfb]/88
                   sm:px-8
+                  sm:text-[10px]
+                  sm:tracking-[0.15em]
 
-                  md:border-[#6f5543]/30
-                  md:bg-[#fffdfb]/88
                   md:text-[11px]
-                  md:text-[#51473f]
                   md:shadow-[0_8px_20px_rgba(75,50,35,0.08)]
-
-                  md:hover:border-[#b07f59]
-                  md:hover:bg-[#f8efe8]
-                  md:hover:text-[#b07f59]
                 "
               >
                 About the Artist
@@ -1139,7 +1148,7 @@ function MagneticLink({
       onMouseLeave={
         handleMouseLeave
       }
-      className="w-full sm:w-auto"
+      className="w-full min-[470px]:w-auto"
     >
       <Link
         href={href}
