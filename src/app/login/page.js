@@ -5,19 +5,26 @@ import {
   useRef,
   useState,
 } from "react";
-import { useRouter } from "next/navigation";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import {
-  Mail,
-  ArrowRight,
-  Loader2,
-  CheckCircle2,
+  AnimatePresence,
+  motion,
+} from "framer-motion";
+
+import {
   AlertCircle,
   ArrowLeft,
-  RefreshCcw,
+  ArrowRight,
+  CheckCircle2,
   Clock3,
+  Loader2,
   LockKeyhole,
+  Mail,
+  RefreshCcw,
 } from "lucide-react";
 
 import {
@@ -49,6 +56,7 @@ export default function LoginPage() {
   const inputRefs = useRef([]);
 
   const loginMutation = useLogin();
+
   const verifyLoginOtpMutation =
     useLoginVerifyOtp();
 
@@ -101,27 +109,31 @@ export default function LoginPage() {
     ).padStart(2, "0")}`;
   };
 
-const getRedirectPath = () => {
-  if (typeof window === "undefined") {
+  const getRedirectPath = () => {
+    if (
+      typeof window === "undefined"
+    ) {
+      return "/courses/learning";
+    }
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    const redirect =
+      params.get("redirect");
+
+    if (
+      redirect &&
+      redirect.startsWith("/") &&
+      !redirect.startsWith("//")
+    ) {
+      return redirect;
+    }
+
     return "/courses/learning";
-  }
-
-  const params = new URLSearchParams(
-    window.location.search
-  );
-
-  const redirect = params.get("redirect");
-
-  if (
-    redirect &&
-    redirect.startsWith("/") &&
-    !redirect.startsWith("//")
-  ) {
-    return redirect;
-  }
-
-  return "/courses/learning";
-};
+  };
 
   const resetOtp = () => {
     setOtp(createEmptyOtp());
@@ -135,6 +147,12 @@ const getRedirectPath = () => {
     setError("");
   };
 
+  /*
+  |--------------------------------------------------------------------------
+  | OTP Timer
+  |--------------------------------------------------------------------------
+  */
+
   useEffect(() => {
     if (
       step !== "code" ||
@@ -143,8 +161,8 @@ const getRedirectPath = () => {
       return undefined;
     }
 
-    const timer = window.setInterval(
-      () => {
+    const timer =
+      window.setInterval(() => {
         setSecondsLeft(
           (previousSeconds) => {
             if (
@@ -166,14 +184,18 @@ const getRedirectPath = () => {
             );
           }
         );
-      },
-      1000
-    );
+      }, 1000);
 
     return () => {
       window.clearInterval(timer);
     };
   }, [step, otpSession]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Focus First OTP Input
+  |--------------------------------------------------------------------------
+  */
 
   useEffect(() => {
     if (step !== "code") {
@@ -183,7 +205,7 @@ const getRedirectPath = () => {
     const focusTimer =
       window.setTimeout(() => {
         inputRefs.current[0]?.focus();
-      }, 100);
+      }, 120);
 
     return () => {
       window.clearTimeout(
@@ -191,6 +213,12 @@ const getRedirectPath = () => {
       );
     };
   }, [step, otpSession]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | Email Submit
+  |--------------------------------------------------------------------------
+  */
 
   const handleEmailSubmit = (
     event
@@ -253,6 +281,12 @@ const getRedirectPath = () => {
       }
     );
   };
+
+  /*
+  |--------------------------------------------------------------------------
+  | OTP Input
+  |--------------------------------------------------------------------------
+  */
 
   const handleOtpChange = (
     index,
@@ -378,6 +412,12 @@ const getRedirectPath = () => {
     ]?.focus();
   };
 
+  /*
+  |--------------------------------------------------------------------------
+  | Verify OTP
+  |--------------------------------------------------------------------------
+  */
+
   const handleCodeSubmit = (
     event
   ) => {
@@ -411,13 +451,14 @@ const getRedirectPath = () => {
       },
       {
         onSuccess: () => {
-          /*
-           * Backend HTTP-only cookie set karega.
-           * Token localStorage mein save nahi hoga.
-           */
-
-          if (typeof window !== "undefined") {
-            localStorage.setItem("art_store_authenticated", "true");
+          if (
+            typeof window !==
+            "undefined"
+          ) {
+            localStorage.setItem(
+              "art_store_authenticated",
+              "true"
+            );
           }
 
           const redirectPath =
@@ -443,6 +484,12 @@ const getRedirectPath = () => {
       }
     );
   };
+
+  /*
+  |--------------------------------------------------------------------------
+  | Resend OTP
+  |--------------------------------------------------------------------------
+  */
 
   const handleResendCode = () => {
     setError("");
@@ -496,603 +543,153 @@ const getRedirectPath = () => {
   };
 
   return (
-    <>
-      <style>{`
-        @import url("https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap");
-
-        :root {
-          --page-background: #f5f1ec;
-          --text-primary: #302b27;
-          --text-secondary: #756e68;
-          --accent: #927157;
-          --accent-dark: #71533e;
-          --accent-light: #f4ede7;
-          --border: #ded3ca;
-          --success: #287044;
-          --success-background: #edf8f1;
-          --error: #a44234;
-          --error-background: #fff1ef;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-
-        body {
-          margin: 0;
-        }
-
-        button,
-        input {
-          font-family: inherit;
-        }
-
-        .login-page {
-          width: 100%;
-          min-height: 100vh;
-          padding: 48px 24px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background:
-            radial-gradient(
-              circle at top left,
-              rgba(159, 121, 91, 0.13),
-              transparent 34%
-            ),
-            radial-gradient(
-              circle at bottom right,
-              rgba(92, 69, 52, 0.09),
-              transparent 32%
-            ),
-            var(--page-background);
-          color: var(--text-primary);
-          font-family: "Jost", sans-serif;
-        }
-
-        .login-content {
-          width: 100%;
-          max-width: 470px;
-        }
-
-        .brand-section {
-          margin-bottom: 34px;
-          text-align: center;
-        }
-
-        .logo-link {
-          display: inline-block;
-          text-decoration: none;
-        }
-
-        .logo-wrapper {
-          width: 200px;
-          height: 95px;
-          position: relative;
-          margin: 0 auto 13px;
-        }
-
-        .brand-logo {
-          object-fit: contain;
-          object-position: center;
-        }
-
-        .brand-subtitle {
-          width: fit-content;
-          margin: 0 auto;
-          padding: 7px 14px;
-          border: 1px solid
-            rgba(146, 113, 87, 0.2);
-          border-radius: 999px;
-          background:
-            rgba(255, 255, 255, 0.42);
-          color: var(--accent-dark);
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          backdrop-filter: blur(8px);
-        }
-
-        .back-link {
-          width: fit-content;
-          margin-bottom: 30px;
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          color: var(--text-secondary);
-          font-size: 13px;
-          font-weight: 600;
-          text-decoration: none;
-          transition:
-            color 160ms ease,
-            transform 160ms ease;
-        }
-
-        .back-link:hover {
-          color: var(--accent-dark);
-          transform: translateX(-2px);
-        }
-
-        .form-heading {
-          margin: 0;
-          color: var(--text-primary);
-          font-family:
-            "Playfair Display",
-            serif;
-          font-size: 42px;
-          font-weight: 600;
-          line-height: 1.12;
-          letter-spacing: -0.02em;
-        }
-
-        .form-description {
-          max-width: 430px;
-          margin: 14px 0 0;
-          color: var(--text-secondary);
-          font-size: 15px;
-          line-height: 1.65;
-        }
-
-        .form-description strong {
-          color: var(--text-primary);
-          font-weight: 600;
-          word-break: break-word;
-        }
-
-        .login-form {
-          margin-top: 30px;
-        }
-
-        .field-group {
-          margin-bottom: 19px;
-        }
-
-        .field-label {
-          display: block;
-          margin-bottom: 9px;
-          color: var(--text-primary);
-          font-size: 13px;
-          font-weight: 600;
-        }
-
-        .input-wrapper {
-          position: relative;
-        }
-
-        .input-icon {
-          position: absolute;
-          top: 50%;
-          left: 17px;
-          transform: translateY(-50%);
-          color: #9c806a;
-          pointer-events: none;
-        }
-
-        .email-input {
-          width: 100%;
-          height: 56px;
-          padding: 0 17px 0 49px;
-          border: 1px solid var(--border);
-          border-radius: 12px;
-          outline: none;
-          background:
-            rgba(255, 255, 255, 0.72);
-          color: var(--text-primary);
-          font-size: 15px;
-          font-weight: 500;
-          backdrop-filter: blur(8px);
-          transition:
-            background 160ms ease,
-            border-color 160ms ease,
-            box-shadow 160ms ease;
-        }
-
-        .email-input::placeholder {
-          color: #aaa19a;
-          font-weight: 400;
-        }
-
-        .email-input:hover:not(:disabled) {
-          border-color: #c4af9d;
-          background:
-            rgba(255, 255, 255, 0.88);
-        }
-
-        .email-input:focus {
-          border-color: var(--accent);
-          background: #ffffff;
-          box-shadow:
-            0 0 0 4px
-            rgba(146, 113, 87, 0.11);
-        }
-
-        .email-input:disabled {
-          cursor: not-allowed;
-          opacity: 0.65;
-        }
-
-        .primary-button {
-          width: 100%;
-          height: 56px;
-          border: none;
-          border-radius: 12px;
-          background: var(--text-primary);
-          color: #ffffff;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 9px;
-          font-size: 13px;
-          font-weight: 700;
-          letter-spacing: 0.07em;
-          text-transform: uppercase;
-          transition:
-            background 160ms ease,
-            transform 160ms ease,
-            box-shadow 160ms ease;
-        }
-
-        .primary-button:hover:not(:disabled) {
-          background: #443d37;
-          transform: translateY(-1px);
-          box-shadow:
-            0 12px 24px
-            rgba(48, 43, 39, 0.16);
-        }
-
-        .primary-button:disabled {
-          opacity: 0.58;
-          cursor: not-allowed;
-          transform: none;
-          box-shadow: none;
-        }
-
-        .otp-header {
-          margin-bottom: 11px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-        }
-
-        .timer {
-          padding: 7px 10px;
-          border: 1px solid var(--border);
-          border-radius: 999px;
-          background:
-            rgba(255, 255, 255, 0.55);
-          color: var(--accent);
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 12px;
-          font-weight: 700;
-        }
-
-        .timer.expired {
-          border-color: #edc8c2;
-          background:
-            var(--error-background);
-          color: var(--error);
-        }
-
-        .otp-grid {
-          display: grid;
-          grid-template-columns:
-            repeat(6, 1fr);
-          gap: 8px;
-        }
-
-        .otp-input {
-          width: 100%;
-          height: 56px;
-          padding: 0;
-          border: 1px solid var(--border);
-          border-radius: 11px;
-          outline: none;
-          background:
-            rgba(255, 255, 255, 0.72);
-          color: var(--text-primary);
-          font-size: 21px;
-          font-weight: 700;
-          text-align: center;
-          transition:
-            background 160ms ease,
-            border-color 160ms ease,
-            box-shadow 160ms ease,
-            transform 160ms ease;
-        }
-
-        .otp-input:hover:not(:disabled) {
-          border-color: #c4af9d;
-          background:
-            rgba(255, 255, 255, 0.9);
-        }
-
-        .otp-input:focus {
-          border-color: var(--accent);
-          background: #ffffff;
-          box-shadow:
-            0 0 0 4px
-            rgba(146, 113, 87, 0.11);
-          transform: translateY(-1px);
-        }
-
-        .otp-input:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        .secondary-actions {
-          margin-top: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 14px;
-        }
-
-        .text-button {
-          padding: 0;
-          border: none;
-          background: transparent;
-          color: var(--accent);
-          cursor: pointer;
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          font-size: 13px;
-          font-weight: 600;
-          transition: color 160ms ease;
-        }
-
-        .text-button:hover:not(:disabled) {
-          color: var(--accent-dark);
-        }
-
-        .text-button:disabled {
-          opacity: 0.55;
-          cursor: not-allowed;
-        }
-
-        .alert {
-          margin-top: 18px;
-          padding: 13px 14px;
-          border-radius: 11px;
-          display: flex;
-          align-items: flex-start;
-          gap: 9px;
-          font-size: 13px;
-          line-height: 1.5;
-        }
-
-        .success-alert {
-          border: 1px solid #cce6d5;
-          background:
-            var(--success-background);
-          color: var(--success);
-        }
-
-        .error-alert {
-          border: 1px solid #efcac5;
-          background:
-            var(--error-background);
-          color: var(--error);
-        }
-
-        .alert-icon {
-          flex-shrink: 0;
-          margin-top: 1px;
-        }
-
-        .register-note {
-          margin: 25px 0 0;
-          color: var(--text-secondary);
-          font-size: 14px;
-          text-align: center;
-        }
-
-        .register-link {
-          color: var(--accent-dark);
-          font-size: 14px;
-          font-weight: 700;
-          text-decoration: none;
-          transition: color 160ms ease;
-        }
-
-        .register-link:hover {
-          color: var(--text-primary);
-          text-decoration: underline;
-        }
-
-        .security-note {
-          margin-top: 23px;
-          padding-top: 20px;
-          border-top: 1px solid
-            rgba(146, 113, 87, 0.18);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          color: #8c8279;
-          font-size: 12px;
-          text-align: center;
-        }
-
-        .spin {
-          animation:
-            spin 0.85s linear infinite;
-        }
-
-        @keyframes spin {
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        @media (max-width: 560px) {
-          .login-page {
-            padding: 35px 22px;
-            align-items: flex-start;
-          }
-
-          .login-content {
-            max-width: 100%;
-          }
-
-          .logo-wrapper {
-            width: 170px;
-            height: 80px;
-          }
-
-          .brand-section {
-            margin-bottom: 28px;
-          }
-
-          .back-link {
-            margin-bottom: 25px;
-          }
-
-          .form-heading {
-            font-size: 35px;
-          }
-
-          .otp-grid {
-            gap: 6px;
-          }
-
-          .otp-input {
-            height: 48px;
-            border-radius: 9px;
-            font-size: 18px;
-          }
-
-          .secondary-actions {
-            align-items: flex-start;
-            flex-direction: column;
-          }
-        }
-
-        @media (max-width: 380px) {
-          .login-page {
-            padding: 28px 16px;
-          }
-
-          .form-heading {
-            font-size: 32px;
-          }
-
-          .otp-grid {
-            gap: 4px;
-          }
-
-          .otp-input {
-            height: 44px;
-            font-size: 17px;
-          }
-        }
-      `}</style>
-
-      <main className="login-page">
-        <div className="login-content">
-          <div className="brand-section">
-            <Link
-              href="/"
-              className="logo-link"
-              aria-label="Rakhshinda Art Home"
-            >
-              <div className="logo-wrapper">
-                <Image
-                  src="/images/footer-logo.png"
-                  alt="Rakhshinda Art Logo"
-                  fill
-                  priority
-                  quality={100}
-                  sizes="200px"
-                  className="brand-logo"
-                />
-              </div>
-            </Link>
-
-            <p className="brand-subtitle">
-              Creative Learning Portal
-            </p>
-          </div>
-
+    <main className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#f6f1eb] px-5 py-10 text-[#29241f] sm:px-8 sm:py-14">
+      {/* Soft background decoration */}
+      <div className="pointer-events-none absolute -left-40 -top-40 h-[420px] w-[420px] rounded-full bg-[#dfcbb8]/28 blur-3xl" />
+
+      <div className="pointer-events-none absolute -bottom-44 -right-40 h-[460px] w-[460px] rounded-full bg-[#c8a98d]/18 blur-3xl" />
+
+      <div className="relative z-10 w-full max-w-[470px]">
+        {/* Logo */}
+        <div className="mb-7 text-center sm:mb-9">
           <Link
             href="/"
-            className="back-link"
+            aria-label="Rakhshinda Art Home"
+            className="inline-block"
           >
-            <ArrowLeft size={16} />
-            Back to home
+            <div className="relative mx-auto h-[82px] w-[185px] sm:h-[92px] sm:w-[205px]">
+              <Image
+                src="/images/logo.png"
+                alt="Rakhshinda Art"
+                fill
+                priority
+                quality={100}
+                sizes="205px"
+                className="object-contain"
+              />
+            </div>
           </Link>
 
+          <div className="mt-2 flex items-center justify-center gap-3">
+            <span className="h-px w-7 bg-[#b18b69]" />
+
+            <p className="text-[9px] font-semibold uppercase tracking-[0.27em] text-[#9a7658]">
+              Creative Learning Portal
+            </p>
+
+            <span className="h-px w-7 bg-[#b18b69]" />
+          </div>
+        </div>
+
+        {/* Back link */}
+        <div className="mb-8 flex items-center justify-between gap-4">
+          <Link
+            href="/"
+            className="group inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.13em] text-[#766d65] transition hover:text-[#8c684d]"
+          >
+            <ArrowLeft
+              size={15}
+              className="transition-transform group-hover:-translate-x-1"
+            />
+
+            Back home
+          </Link>
+
+          <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[#aa9b8f]">
+            {step === "email"
+              ? "Step 01 / 02"
+              : "Step 02 / 02"}
+          </span>
+        </div>
+
+        <AnimatePresence mode="wait">
           {step === "email" ? (
-            <>
-              <h1 className="form-heading">
+            <motion.section
+              key="email-step"
+              initial={{
+                opacity: 0,
+                y: 12,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -8,
+              }}
+              transition={{
+                duration: 0.35,
+                ease: [
+                  0.22,
+                  1,
+                  0.36,
+                  1,
+                ],
+              }}
+            >
+              <h1 className="font-special text-[46px] font-normal italic leading-[0.92] tracking-[-0.045em] text-[#211d19] sm:text-[57px]">
                 Welcome back
               </h1>
 
-              <p className="form-description">
+              <p className="mt-5 max-w-[430px] text-[14px] leading-7 text-[#756c64] sm:text-[15px]">
                 Enter your registered email
-                address. We will send you a
-                secure OTP for verification.
+                address and we will send you a
+                secure six-digit verification
+                code.
               </p>
 
               <form
-                className="login-form"
-                onSubmit={
-                  handleEmailSubmit
-                }
+                onSubmit={handleEmailSubmit}
                 noValidate
+                className="mt-8"
               >
-                <div className="field-group">
+                <div>
                   <label
-                    className="field-label"
                     htmlFor="email"
+                    className="mb-2.5 block text-[11px] font-semibold uppercase tracking-[0.13em] text-[#403933]"
                   >
                     Email address
                   </label>
 
-                  <div className="input-wrapper">
+                  <div className="relative">
                     <Mail
-                      className="input-icon"
                       size={18}
-                      strokeWidth={1.8}
+                      strokeWidth={1.7}
+                      className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#9c8069]"
                     />
 
                     <input
                       id="email"
                       type="email"
-                      className="email-input"
-                      placeholder="Enter your email address"
                       value={email}
+                      autoFocus
                       autoComplete="email"
                       disabled={isBusy}
+                      placeholder="Enter your email address"
                       onChange={(event) => {
                         setEmail(
-                          event.target
-                            .value
+                          event.target.value
                         );
 
                         setError("");
                         setMessage("");
                       }}
+                      className="h-[56px] w-full rounded-[5px] border border-[#d7cbc0] bg-white/65 pl-12 pr-4 text-[14px] font-medium text-[#29241f] outline-none backdrop-blur-sm transition placeholder:font-normal placeholder:text-[#aaa099] hover:border-[#bca58f] hover:bg-white/80 focus:border-[#957054] focus:bg-white focus:shadow-[0_0_0_4px_rgba(149,112,84,0.10)] disabled:cursor-not-allowed disabled:opacity-60"
                     />
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="primary-button"
                   disabled={isSendingOtp}
+                  className="group mt-5 inline-flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[5px] border border-[#29241f] bg-[#29241f] px-6 text-[11px] font-semibold uppercase tracking-[0.17em] text-white transition duration-300 hover:-translate-y-0.5 hover:border-[#9a7658] hover:bg-[#9a7658] hover:shadow-[0_14px_30px_rgba(79,57,40,0.17)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
                 >
                   {isSendingOtp ? (
                     <>
                       <Loader2
-                        size={18}
-                        className="spin"
+                        size={17}
+                        className="animate-spin"
                       />
 
                       Sending OTP
@@ -1102,132 +699,158 @@ const getRedirectPath = () => {
                       Continue
 
                       <ArrowRight
-                        size={18}
+                        size={17}
+                        className="transition-transform group-hover:translate-x-1"
                       />
                     </>
                   )}
                 </button>
               </form>
-            </>
+
+              <p className="mt-7 text-center text-[13px] text-[#776e66]">
+                Don&apos;t have an account?{" "}
+                <Link
+                  href="/register"
+                  className="font-semibold text-[#8b664b] transition hover:text-[#29241f] hover:underline"
+                >
+                  Create account
+                </Link>
+              </p>
+            </motion.section>
           ) : (
-            <>
-              <h1 className="form-heading">
-                Enter your OTP
+            <motion.section
+              key="otp-step"
+              initial={{
+                opacity: 0,
+                y: 12,
+              }}
+              animate={{
+                opacity: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                y: -8,
+              }}
+              transition={{
+                duration: 0.35,
+                ease: [
+                  0.22,
+                  1,
+                  0.36,
+                  1,
+                ],
+              }}
+            >
+              <h1 className="font-special text-[44px] font-normal italic leading-[0.92] tracking-[-0.045em] text-[#211d19] sm:text-[55px]">
+                Verify your email
               </h1>
 
-              <p className="form-description">
-                We sent a 6-digit
+              <p className="mt-5 text-[14px] leading-7 text-[#756c64] sm:text-[15px]">
+                We sent a six-digit
                 verification code to{" "}
 
-                <strong>
+                <strong className="break-all font-semibold text-[#29241f]">
                   {email}
                 </strong>
                 .
               </p>
 
               <form
-                className="login-form"
-                onSubmit={
-                  handleCodeSubmit
-                }
+                className="mt-8"
+                onSubmit={handleCodeSubmit}
               >
-                <div className="field-group">
-                  <div className="otp-header">
-                    <label
-                      className="field-label"
-                      style={{
-                        marginBottom: 0,
-                      }}
-                    >
-                      Verification code
-                    </label>
-
-                    <div
-                      className={`timer ${
-                        isExpired
-                          ? "expired"
-                          : ""
-                      }`}
-                    >
-                      <Clock3 size={14} />
-
-                      {isExpired
-                        ? "Expired"
-                        : formatTime(
-                            secondsLeft
-                          )}
-                    </div>
-                  </div>
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <label className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#403933]">
+                    Verification code
+                  </label>
 
                   <div
-                    className="otp-grid"
-                    onPaste={
-                      handleOtpPaste
-                    }
+                    className={`inline-flex min-h-[32px] items-center gap-1.5 rounded-[4px] border px-3 text-[11px] font-semibold ${
+                      isExpired
+                        ? "border-[#e7bdb7] bg-[#fff0ed] text-[#a44234]"
+                        : "border-[#d7cbc0] bg-white/55 text-[#937055]"
+                    }`}
                   >
-                    {otp.map(
-                      (
-                        digit,
-                        index
-                      ) => (
-                        <input
-                          key={index}
-                          ref={(element) => {
-                            inputRefs.current[
-                              index
-                            ] = element;
-                          }}
-                          type="text"
-                          inputMode="numeric"
-                          autoComplete={
-                            index === 0
-                              ? "one-time-code"
-                              : "off"
-                          }
-                          maxLength={1}
-                          className="otp-input"
-                          value={digit}
-                          disabled={
-                            isExpired ||
-                            isVerifyingOtp
-                          }
-                          aria-label={`OTP digit ${
-                            index + 1
-                          }`}
-                          onChange={(event) =>
-                            handleOtpChange(
-                              index,
-                              event.target
-                                .value
-                            )
-                          }
-                          onKeyDown={(event) =>
-                            handleOtpKeyDown(
-                              index,
-                              event
-                            )
-                          }
-                        />
-                      )
-                    )}
+                    <Clock3
+                      size={13}
+                      strokeWidth={1.8}
+                    />
+
+                    {isExpired
+                      ? "Expired"
+                      : formatTime(
+                          secondsLeft
+                        )}
                   </div>
+                </div>
+
+                <div
+                  className="grid grid-cols-6 gap-1.5 sm:gap-2"
+                  onPaste={handleOtpPaste}
+                >
+                  {otp.map(
+                    (
+                      digit,
+                      index
+                    ) => (
+                      <input
+                        key={index}
+                        ref={(element) => {
+                          inputRefs.current[
+                            index
+                          ] = element;
+                        }}
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete={
+                          index === 0
+                            ? "one-time-code"
+                            : "off"
+                        }
+                        maxLength={1}
+                        value={digit}
+                        disabled={
+                          isExpired ||
+                          isVerifyingOtp
+                        }
+                        aria-label={`OTP digit ${
+                          index + 1
+                        }`}
+                        onChange={(event) =>
+                          handleOtpChange(
+                            index,
+                            event.target
+                              .value
+                          )
+                        }
+                        onKeyDown={(event) =>
+                          handleOtpKeyDown(
+                            index,
+                            event
+                          )
+                        }
+                        className="h-[49px] min-w-0 rounded-[5px] border border-[#d7cbc0] bg-white/65 p-0 text-center text-[19px] font-bold text-[#29241f] outline-none backdrop-blur-sm transition hover:border-[#bca58f] hover:bg-white/80 focus:-translate-y-0.5 focus:border-[#957054] focus:bg-white focus:shadow-[0_0_0_3px_rgba(149,112,84,0.10)] disabled:cursor-not-allowed disabled:opacity-60 sm:h-[56px] sm:text-[21px]"
+                      />
+                    )
+                  )}
                 </div>
 
                 <button
                   type="submit"
-                  className="primary-button"
                   disabled={
                     isVerifyingOtp ||
                     isExpired ||
                     code.length !==
                       OTP_LENGTH
                   }
+                  className="group mt-5 inline-flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[5px] border border-[#29241f] bg-[#29241f] px-5 text-[10px] font-semibold uppercase tracking-[0.15em] text-white transition duration-300 hover:-translate-y-0.5 hover:border-[#9a7658] hover:bg-[#9a7658] hover:shadow-[0_14px_30px_rgba(79,57,40,0.17)] disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0"
                 >
                   {isVerifyingOtp ? (
                     <>
                       <Loader2
-                        size={18}
-                        className="spin"
+                        size={17}
+                        className="animate-spin"
                       />
 
                       Verifying
@@ -1237,40 +860,41 @@ const getRedirectPath = () => {
                       Verify and continue
 
                       <ArrowRight
-                        size={18}
+                        size={17}
+                        className="transition-transform group-hover:translate-x-1"
                       />
                     </>
                   )}
                 </button>
               </form>
 
-              <div className="secondary-actions">
+              <div className="mt-5 flex flex-col gap-3 border-t border-[#dfd4ca] pt-5 min-[390px]:flex-row min-[390px]:items-center min-[390px]:justify-between">
                 <button
                   type="button"
-                  className="text-button"
                   disabled={isBusy}
                   onClick={
                     handleChangeEmail
                   }
+                  className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.11em] text-[#87654c] transition hover:text-[#29241f] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <ArrowLeft size={15} />
+                  <ArrowLeft size={14} />
 
                   Change email
                 </button>
 
                 <button
                   type="button"
-                  className="text-button"
                   onClick={
                     handleResendCode
                   }
                   disabled={isSendingOtp}
+                  className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.11em] text-[#87654c] transition hover:text-[#29241f] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <RefreshCcw
-                    size={15}
+                    size={14}
                     className={
                       isSendingOtp
-                        ? "spin"
+                        ? "animate-spin"
                         : ""
                     }
                   />
@@ -1280,56 +904,79 @@ const getRedirectPath = () => {
                     : "Resend OTP"}
                 </button>
               </div>
-            </>
+            </motion.section>
           )}
+        </AnimatePresence>
 
-          <div aria-live="polite">
+        {/* Alerts */}
+        <div
+          aria-live="polite"
+          className="mt-5"
+        >
+          <AnimatePresence mode="wait">
             {message && (
-              <div className="alert success-alert">
+              <motion.div
+                key={`success-${message}`}
+                initial={{
+                  opacity: 0,
+                  y: 6,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                }}
+                className="flex items-start gap-3 rounded-[5px] border border-[#c8e2d1] bg-[#eef8f1] px-4 py-3.5 text-[12px] leading-5 text-[#287044]"
+              >
                 <CheckCircle2
-                  size={18}
-                  className="alert-icon"
+                  size={17}
+                  className="mt-0.5 shrink-0"
                 />
 
                 <span>{message}</span>
-              </div>
+              </motion.div>
             )}
 
             {error && (
-              <div className="alert error-alert">
+              <motion.div
+                key={`error-${error}`}
+                initial={{
+                  opacity: 0,
+                  y: 6,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                }}
+                className="flex items-start gap-3 rounded-[5px] border border-[#edc8c2] bg-[#fff1ef] px-4 py-3.5 text-[12px] leading-5 text-[#a44234]"
+              >
                 <AlertCircle
-                  size={18}
-                  className="alert-icon"
+                  size={17}
+                  className="mt-0.5 shrink-0"
                 />
 
                 <span>{error}</span>
-              </div>
+              </motion.div>
             )}
-          </div>
-
-          {step === "email" && (
-            <p className="register-note">
-              Don&apos;t have an
-              account?{" "}
-
-              <Link
-                href="/register"
-                className="register-link"
-              >
-                Create account
-              </Link>
-            </p>
-          )}
-
-          <div className="security-note">
-            <LockKeyhole size={15} />
-
-            Your account is protected
-            with secure email
-            verification.
-          </div>
+          </AnimatePresence>
         </div>
-      </main>
-    </>
+
+        {/* Security note */}
+        <div className="mt-7 flex items-center justify-center gap-2 border-t border-[#ded3c9] pt-6 text-center text-[11px] leading-5 text-[#8a8077]">
+          <LockKeyhole
+            size={14}
+            strokeWidth={1.7}
+          />
+
+          Your account is protected with
+          secure email verification.
+        </div>
+      </div>
+    </main>
   );
 }

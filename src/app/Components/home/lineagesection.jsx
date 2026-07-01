@@ -5,7 +5,9 @@ import {
   useEffect,
   useState,
 } from "react";
+
 import { motion } from "framer-motion";
+
 import {
   ArrowUpRight,
   Check,
@@ -13,11 +15,9 @@ import {
   RefreshCw,
   ShoppingBag,
 } from "lucide-react";
-import { addCartItem } from "../../lib/localCart";
 
-import {
-  useFeaturedPaintings,
-} from "../../hooks/usePaintings";
+import { addCartItem } from "../../lib/localCart";
+import { useFeaturedPaintings } from "../../hooks/usePaintings";
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +40,12 @@ const formatPrice = (price) => {
     maximumFractionDigits: 2,
   }).format(amount);
 };
+
+/*
+|--------------------------------------------------------------------------
+| Featured Artworks Section
+|--------------------------------------------------------------------------
+*/
 
 export default function FeaturedArtworksSection() {
   const {
@@ -101,7 +107,7 @@ export default function FeaturedArtworksSection() {
             duration: 0.75,
             delay: 0.05,
           }}
-          className={`font-special text-[48px] font-normal italic leading-[0.9] tracking-[-0.055em] text-[#171717] sm:text-[64px] md:text-[78px] lg:text-[92px]`}
+          className="font-special text-[48px] font-normal italic leading-[0.9] tracking-[-0.055em] text-[#171717] sm:text-[64px] md:text-[78px] lg:text-[92px]"
         >
           Original Paintings
         </motion.h2>
@@ -125,10 +131,10 @@ export default function FeaturedArtworksSection() {
           }}
           className="mx-auto mt-6 max-w-2xl text-[14px] leading-7 text-[#625b52] sm:text-[16px]"
         >
-          A curated selection of original
-          paintings, Arabic calligraphy and
-          Islamic illustrations created with
-          detail, emotion and timeless beauty.
+          A curated selection of original paintings,
+          Arabic calligraphy and Islamic illustrations
+          created with detail, emotion and timeless
+          beauty.
         </motion.p>
       </div>
 
@@ -141,8 +147,7 @@ export default function FeaturedArtworksSection() {
         {!isLoading && isError && (
           <div className="mx-auto flex max-w-xl flex-col items-center px-5 py-14 text-center">
             <p className="text-[15px] text-[#625b52]">
-              {error?.response?.data
-                ?.message ||
+              {error?.response?.data?.message ||
                 error?.message ||
                 "Unable to load featured paintings."}
             </p>
@@ -151,7 +156,7 @@ export default function FeaturedArtworksSection() {
               type="button"
               onClick={() => refetch()}
               disabled={isFetching}
-              className="mt-5 inline-flex min-h-[46px] items-center justify-center gap-2 rounded-full bg-[#1e1e1c] px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition duration-300 hover:bg-[#b8964f] disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-5 inline-flex min-h-[46px] items-center justify-center gap-2 rounded-[4px] border border-[#1e1e1c] bg-[#1e1e1c] px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition duration-300 hover:border-[#b8964f] hover:bg-[#b8964f] disabled:cursor-not-allowed disabled:opacity-60"
             >
               <RefreshCw
                 size={14}
@@ -173,16 +178,13 @@ export default function FeaturedArtworksSection() {
           !isError &&
           artworks.length === 0 && (
             <div className="mx-auto max-w-xl px-5 py-14 text-center">
-              <h3
-                className={`font-special text-[34px] font-normal italic text-[#1e1e1c]`}
-              >
-                Featured paintings coming
-                soon
+              <h3 className="font-special text-[34px] font-normal italic text-[#1e1e1c]">
+                Featured paintings coming soon
               </h3>
 
               <p className="mt-3 text-[14px] leading-7 text-[#625b52]">
-                No featured paintings are
-                available at the moment.
+                No featured paintings are available at
+                the moment.
               </p>
             </div>
           )}
@@ -234,10 +236,11 @@ export default function FeaturedArtworksSection() {
             </>
           )}
 
+        {/* View all artwork */}
         <div className="mt-12 flex justify-center px-5">
           <Link
             href="/shop"
-            className="group inline-flex min-h-[48px] items-center justify-center gap-3 rounded-full bg-white/60 px-8 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#1e1e1c] shadow-[0_12px_35px_rgba(0,0,0,0.06)] backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-[#1e1e1c] hover:text-white"
+            className="group inline-flex min-h-[48px] items-center justify-center gap-3 rounded-[4px] border border-[#2f2a24]/20 bg-white/60 px-8 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#1e1e1c] shadow-[0_12px_35px_rgba(0,0,0,0.06)] backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-[#1e1e1c] hover:bg-[#1e1e1c] hover:text-white"
           >
             View All Artwork
 
@@ -285,7 +288,7 @@ export default function FeaturedArtworksSection() {
 
 /*
 |--------------------------------------------------------------------------
-| Painting card
+| Painting Card
 |--------------------------------------------------------------------------
 */
 
@@ -339,7 +342,11 @@ function ArtworkCard({
     stock <= 0;
 
   const handleAddToCart = () => {
-    if (!art?._id || isSoldOut || adding) {
+    if (
+      !art?._id ||
+      isSoldOut ||
+      adding
+    ) {
       return;
     }
 
@@ -355,11 +362,14 @@ function ArtworkCard({
           image: imageUrl,
           unitPrice: art?.price,
           stock,
-          currency: art?.currency || "AED",
+          currency:
+            art?.currency || "AED",
           category: categoryTitle,
         },
         1,
-        { openCart: true }
+        {
+          openCart: true,
+        }
       );
 
       setAdded(true);
@@ -403,9 +413,9 @@ function ArtworkCard({
         href={paintingHref}
         className="group block"
       >
-        <div className="relative overflow-hidden rounded-[22px] bg-transparent p-0 shadow-none transition duration-500 group-hover:-translate-y-1 group-hover:shadow-[0_25px_70px_rgba(0,0,0,0.15)]">
-          <div className="relative aspect-[0.82/1] overflow-hidden rounded-[16px] bg-[#e7dfd5]">
-            <div className="pointer-events-none absolute inset-0 z-10 rounded-[16px] border-[3px] border-transparent transition duration-500 group-hover:border-[#b49b45]" />
+        <div className="relative overflow-hidden rounded-[5px] border border-[#d8cec2] bg-transparent p-0 transition duration-500 group-hover:-translate-y-1 group-hover:border-[#b8964f] group-hover:shadow-[0_25px_70px_rgba(0,0,0,0.13)]">
+          <div className="relative aspect-[0.82/1] overflow-hidden rounded-[4px] bg-[#e7dfd5]">
+            <div className="pointer-events-none absolute inset-0 z-10 rounded-[4px] border-[3px] border-transparent transition duration-500 group-hover:border-[#b49b45]" />
 
             <img
               src={imageUrl}
@@ -414,23 +424,28 @@ function ArtworkCard({
                 "Original painting"
               }
               loading="lazy"
-              className="h-full w-full rounded-[16px] object-cover object-center transition duration-[1200ms] ease-out group-hover:scale-105"
+              className="h-full w-full rounded-[4px] object-cover object-center transition duration-[1200ms] ease-out group-hover:scale-105"
             />
 
-            <div className="absolute inset-0 rounded-[16px] bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
+            <div className="absolute inset-0 rounded-[4px] bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 transition duration-500 group-hover:opacity-100" />
 
-            <div className="absolute left-4 top-4 rounded-full bg-white/90 px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#1e1e1c] opacity-0 shadow-sm backdrop-blur-md transition duration-300 group-hover:opacity-100">
+            {/* Category */}
+            <div className="absolute left-4 top-4 rounded-[4px] border border-white/50 bg-white/90 px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#1e1e1c] opacity-0 shadow-sm backdrop-blur-md transition duration-300 group-hover:opacity-100">
               {categoryTitle}
             </div>
 
+            {/* Sold out */}
             {isSoldOut && (
-              <div className="absolute right-4 top-4 rounded-full bg-[#1e1e1c]/90 px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.18em] text-white shadow-sm backdrop-blur-md">
+              <div className="absolute right-4 top-4 rounded-[4px] border border-white/20 bg-[#1e1e1c]/90 px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.18em] text-white shadow-sm backdrop-blur-md">
                 Sold Out
               </div>
             )}
 
-            <div className="absolute bottom-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-black shadow-sm backdrop-blur-md transition duration-300 group-hover:bg-[#1e1e1c] group-hover:text-white">
-              <ArrowUpRight size={17} />
+            {/* Detail arrow */}
+            <div className="absolute bottom-4 right-4 flex h-10 w-10 items-center justify-center rounded-[4px] border border-white/50 bg-white/90 text-black shadow-sm backdrop-blur-md transition duration-300 group-hover:border-[#1e1e1c] group-hover:bg-[#1e1e1c] group-hover:text-white">
+              <ArrowUpRight
+                size={17}
+              />
             </div>
           </div>
         </div>
@@ -440,9 +455,7 @@ function ArtworkCard({
             {categoryTitle}
           </p>
 
-          <h3
-            className={`font-special text-[27px] font-normal italic leading-none tracking-[-0.035em] text-[#1e1e1c] sm:text-[31px]`}
-          >
+          <h3 className="font-special text-[27px] font-normal italic leading-none tracking-[-0.035em] text-[#1e1e1c] sm:text-[31px]">
             {art?.title}
           </h3>
         </div>
@@ -452,7 +465,9 @@ function ArtworkCard({
       <div className="px-1 pt-3">
         <div className="flex items-center justify-between gap-3">
           <p className="text-[15px] font-semibold text-[#756756]">
-            {formatPrice(art?.price)}
+            {formatPrice(
+              art?.price
+            )}
           </p>
 
           {!isSoldOut && (
@@ -469,12 +484,12 @@ function ArtworkCard({
             isSoldOut ||
             adding
           }
-          className={`mt-4 inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] transition duration-300 ${
+          className={`mt-4 inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-[4px] border px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.16em] transition duration-300 ${
             added
-              ? "bg-[#b8964f] text-white"
+              ? "border-[#b8964f] bg-[#b8964f] text-white"
               : isSoldOut
-                ? "cursor-not-allowed bg-[#d9d2ca] text-[#8c847b]"
-                : "bg-[#1e1e1c] text-white hover:-translate-y-0.5 hover:bg-[#b8964f] hover:shadow-[0_12px_30px_rgba(184,150,79,0.28)]"
+                ? "cursor-not-allowed border-[#d9d2ca] bg-[#d9d2ca] text-[#8c847b]"
+                : "border-[#1e1e1c] bg-[#1e1e1c] text-white hover:-translate-y-0.5 hover:border-[#b8964f] hover:bg-[#b8964f] hover:shadow-[0_12px_30px_rgba(184,150,79,0.28)]"
           } disabled:cursor-not-allowed disabled:opacity-70`}
         >
           {adding ? (
@@ -483,28 +498,33 @@ function ArtworkCard({
                 size={15}
                 className="animate-spin"
               />
+
               Adding
             </>
           ) : added ? (
             <>
               <Check size={15} />
+
               Added to Cart
             </>
           ) : isSoldOut ? (
             "Sold Out"
           ) : (
             <>
-              <ShoppingBag size={15} />
+              <ShoppingBag
+                size={15}
+              />
+
               Add to Cart
             </>
           )}
         </button>
 
         {cartError && (
-            <p className="mt-2 text-center text-[11px] leading-5 text-red-600">
-              {cartError}
-            </p>
-          )}
+          <p className="mt-2 text-center text-[11px] leading-5 text-red-600">
+            {cartError}
+          </p>
+        )}
       </div>
     </motion.article>
   );
@@ -512,7 +532,7 @@ function ArtworkCard({
 
 /*
 |--------------------------------------------------------------------------
-| Loading skeleton
+| Loading Skeleton
 |--------------------------------------------------------------------------
 */
 
@@ -527,15 +547,15 @@ function FeaturedPaintingsSkeleton() {
             key={index}
             className="animate-pulse"
           >
-            <div className="aspect-[0.82/1] rounded-[16px] bg-[#e6ded4]" />
+            <div className="aspect-[0.82/1] rounded-[4px] bg-[#e6ded4]" />
 
-            <div className="mt-5 h-3 w-28 rounded bg-[#e6ded4]" />
+            <div className="mt-5 h-3 w-28 rounded-[3px] bg-[#e6ded4]" />
 
-            <div className="mt-3 h-7 w-3/4 rounded bg-[#e6ded4]" />
+            <div className="mt-3 h-7 w-3/4 rounded-[3px] bg-[#e6ded4]" />
 
-            <div className="mt-3 h-4 w-24 rounded bg-[#e6ded4]" />
+            <div className="mt-3 h-4 w-24 rounded-[3px] bg-[#e6ded4]" />
 
-            <div className="mt-4 h-12 w-full rounded-full bg-[#e6ded4]" />
+            <div className="mt-4 h-12 w-full rounded-[4px] bg-[#e6ded4]" />
           </div>
         ))}
       </div>
@@ -545,7 +565,7 @@ function FeaturedPaintingsSkeleton() {
 
 /*
 |--------------------------------------------------------------------------
-| Bottom banner
+| Bottom Banner
 |--------------------------------------------------------------------------
 */
 
@@ -578,9 +598,7 @@ function FeatureBanner({
           {label}
         </p>
 
-        <h3
-          className={`font-special max-w-[540px] text-[44px] font-normal italic leading-[0.9] tracking-[-0.055em] text-white sm:text-[58px] lg:text-[70px]`}
-        >
+        <h3 className="font-special max-w-[540px] text-[44px] font-normal italic leading-[0.9] tracking-[-0.055em] text-white sm:text-[58px] lg:text-[70px]">
           {title}
         </h3>
 
@@ -588,10 +606,12 @@ function FeatureBanner({
           {text}
         </p>
 
-        <span className="mt-7 inline-flex items-center justify-center gap-3 rounded-full bg-white px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#1e1e1c] transition duration-300 group-hover:bg-[#1e1e1c] group-hover:text-white">
+        <span className="mt-7 inline-flex items-center justify-center gap-3 rounded-[4px] border border-white bg-white px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#1e1e1c] transition duration-300 group-hover:border-[#1e1e1c] group-hover:bg-[#1e1e1c] group-hover:text-white">
           {button}
 
-          <ArrowUpRight size={14} />
+          <ArrowUpRight
+            size={14}
+          />
         </span>
       </div>
     </Link>

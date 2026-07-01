@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+
 import {
   ArrowRight,
   ArrowUpRight,
@@ -29,10 +30,7 @@ const extractCourses = (response) => {
     response,
   ];
 
-  return (
-    possibleCourses.find(Array.isArray) ||
-    []
-  );
+  return possibleCourses.find(Array.isArray) || [];
 };
 
 const getCourseId = (course) => {
@@ -127,16 +125,8 @@ export default function CoursesSection() {
     error,
   } = useFeaturedCourses();
 
-  /*
-  |--------------------------------------------------------------------------
-  | Maximum 3 Featured Courses
-  |--------------------------------------------------------------------------
-  */
-
   const featuredCourses = useMemo(() => {
-    return extractCourses(
-      coursesResponse
-    )
+    return extractCourses(coursesResponse)
       .filter((course) => {
         const hasId = Boolean(
           getCourseId(course)
@@ -157,20 +147,6 @@ export default function CoursesSection() {
       })
       .slice(0, 3);
   }, [coursesResponse]);
-
-  /*
-  |--------------------------------------------------------------------------
-  | Course Enrollment
-  |--------------------------------------------------------------------------
-  | Course painting cart mein add nahi hoga.
-  |
-  | Guest:
-  | Login page → course checkout
-  |
-  | Logged-in user:
-  | Direct course checkout
-  |--------------------------------------------------------------------------
-  */
 
   const handleEnroll = (courseId) => {
     if (!courseId) {
@@ -203,12 +179,12 @@ export default function CoursesSection() {
       id="courses"
       className="relative overflow-hidden bg-[#f7f3ee] py-20 text-[#211e1a] sm:py-24"
     >
+      {/* Background decoration */}
       <div className="pointer-events-none absolute -left-32 top-20 h-72 w-72 rounded-full bg-[#eadfce]/70 blur-3xl" />
 
       <div className="pointer-events-none absolute -right-32 bottom-10 h-80 w-80 rounded-full bg-[#e8d8c4]/70 blur-3xl" />
 
-      {/* Section Heading */}
-
+      {/* Heading */}
       <div className="relative z-10 mx-auto max-w-4xl px-5 text-center">
         <motion.p
           initial={{
@@ -246,7 +222,7 @@ export default function CoursesSection() {
             duration: 0.65,
             delay: 0.05,
           }}
-          className={`font-special mt-4 text-[48px] font-normal italic leading-[0.92] tracking-[-0.045em] text-[#171717] sm:text-[64px] md:text-[74px]`}
+          className="font-special mt-4 text-[48px] font-normal italic leading-[0.92] tracking-[-0.045em] text-[#171717] sm:text-[64px] md:text-[74px]"
         >
           Learn art at your own pace.
         </motion.h2>
@@ -269,18 +245,19 @@ export default function CoursesSection() {
           }}
           className="mx-auto mt-5 max-w-2xl text-[14px] leading-7 text-[#625b52] sm:text-[15px]"
         >
-          Build confidence through clear, guided lessons designed for beginners, art lovers and growing creatives anywhere in the world.
+          Build confidence through clear, guided
+          lessons designed for beginners, art lovers
+          and growing creatives anywhere in the world.
         </motion.p>
       </div>
 
-      {/* Course Listing */}
-
+      {/* Course listing */}
       <div className="relative z-10 mt-12">
         {isLoading && <CoursesLoading />}
 
         {isError && (
           <div className="mx-auto max-w-[1120px] px-5">
-            <div className="rounded-[22px] border border-red-200 bg-red-50 px-6 py-10 text-center text-[14px] text-red-700">
+            <div className="rounded-[5px] border border-red-200 bg-red-50 px-6 py-10 text-center text-[14px] text-red-700">
               {getApiErrorMessage(
                 error,
                 "Featured courses load nahi ho sake."
@@ -299,16 +276,13 @@ export default function CoursesSection() {
           !isError &&
           featuredCourses.length > 0 && (
             <>
-              {/* Mobile Slider */}
-
+              {/* Mobile slider */}
               <div className="block md:hidden">
-                <div className="courses-scroll flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-5">
+                <div className="courses-scroll flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-5 pb-6">
                   {featuredCourses.map(
                     (course, index) => {
                       const courseId =
-                        getCourseId(
-                          course
-                        );
+                        getCourseId(course);
 
                       return (
                         <CourseCard
@@ -316,9 +290,7 @@ export default function CoursesSection() {
                           course={course}
                           index={index}
                           mobile
-                          onEnroll={
-                            handleEnroll
-                          }
+                          onEnroll={handleEnroll}
                         />
                       );
                     }
@@ -326,25 +298,20 @@ export default function CoursesSection() {
                 </div>
               </div>
 
-              {/* Desktop Grid */}
-
+              {/* Desktop grid */}
               <div className="hidden px-5 md:block">
-                <div className="mx-auto grid max-w-[1120px] grid-cols-2 gap-6 lg:grid-cols-3">
+                <div className="mx-auto grid max-w-[1120px] grid-cols-2 gap-7 lg:grid-cols-3">
                   {featuredCourses.map(
                     (course, index) => {
                       const courseId =
-                        getCourseId(
-                          course
-                        );
+                        getCourseId(course);
 
                       return (
                         <CourseCard
                           key={courseId}
                           course={course}
                           index={index}
-                          onEnroll={
-                            handleEnroll
-                          }
+                          onEnroll={handleEnroll}
                         />
                       );
                     }
@@ -354,10 +321,11 @@ export default function CoursesSection() {
             </>
           )}
 
-        <div className="mt-10 flex justify-center px-5">
+        {/* View all courses */}
+        <div className="mt-11 flex justify-center px-5">
           <Link
             href="/courses"
-            className="group inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-full border border-[#ddd3c7] bg-white/80 px-7 text-[10px] font-semibold uppercase tracking-[0.18em] transition duration-300 hover:border-[#211e1a] hover:bg-[#211e1a] hover:text-white"
+            className="group inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-[4px] border border-[#d4c8bb] bg-[#fffdf9] px-7 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#211e1a] shadow-[0_8px_24px_rgba(45,35,24,0.05)] transition duration-300 hover:-translate-y-0.5 hover:border-[#211e1a] hover:bg-[#211e1a] hover:text-white"
           >
             View All Courses
 
@@ -394,20 +362,25 @@ function CourseCard({
   mobile = false,
   onEnroll,
 }) {
-  const courseId = getCourseId(course);
-  const image = getCourseImage(course);
-  const price = getCoursePrice(course);
+  const courseId =
+    getCourseId(course);
+
+  const image =
+    getCourseImage(course);
+
+  const price =
+    getCoursePrice(course);
 
   const enrollButtonText =
     price === 0
-      ? "Enroll Free"
-      : "Enroll Now";
+      ? "Buy Free"
+      : "Buy Now";
 
   return (
     <motion.article
       initial={{
         opacity: 0,
-        y: 22,
+        y: 24,
       }}
       whileInView={{
         opacity: 1,
@@ -418,25 +391,24 @@ function CourseCard({
         amount: 0.2,
       }}
       transition={{
-        duration: 0.55,
+        duration: 0.58,
         delay: index * 0.06,
         ease: [0.22, 1, 0.36, 1],
       }}
       className={
         mobile
-          ? "w-[290px] shrink-0 snap-center"
+          ? "w-[302px] shrink-0 snap-center"
           : "w-full"
       }
     >
-      <div className="group flex h-full flex-col overflow-hidden rounded-[24px] border border-[#e5dcd1] bg-white shadow-[0_14px_38px_rgba(45,35,24,0.07)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_55px_rgba(45,35,24,0.12)]">
-        {/* Course Image */}
-
+      <div className="group flex h-full flex-col overflow-hidden rounded-[6px] border border-[#d9cfc3] bg-[#fffdf9] shadow-[0_12px_34px_rgba(45,35,24,0.065)] transition duration-500 hover:-translate-y-1 hover:border-[#c1aa8e] hover:shadow-[0_24px_60px_rgba(45,35,24,0.13)]">
+        {/* Course image */}
         <Link
           href={`/courses/${courseId}`}
           aria-label={`View ${
             course?.title || "course"
           }`}
-          className="relative block aspect-[4/3] overflow-hidden bg-[#e9dfd3]"
+          className="relative block aspect-[16/11] overflow-hidden bg-[#e9dfd3]"
         >
           {image ? (
             <img
@@ -447,34 +419,35 @@ function CourseCard({
               }
               loading="lazy"
               decoding="async"
-              className="h-full w-full object-cover object-center transition duration-700 group-hover:scale-[1.04]"
+              className="h-full w-full object-cover object-center transition duration-[900ms] ease-out group-hover:scale-[1.045]"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-[#a98745]">
+            <div className="flex h-full w-full items-center justify-center bg-[#eee5db] text-[#a98745]">
               <BookOpen
-                size={44}
+                size={42}
                 strokeWidth={1.3}
               />
             </div>
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent" />
 
-          <span className="absolute left-4 top-4 max-w-[74%] truncate rounded-full border border-white/50 bg-white/90 px-3.5 py-2 text-[9px] font-semibold uppercase tracking-[0.13em] text-[#292520] shadow-sm backdrop-blur-md">
+          <span className="absolute left-4 top-4 max-w-[72%] truncate rounded-[4px] border border-white/50 bg-white/90 px-3.5 py-2 text-[8px] font-semibold uppercase tracking-[0.15em] text-[#292520] shadow-sm backdrop-blur-sm">
             {getCategoryName(course)}
           </span>
+
+          <div className="absolute bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-[4px] border border-white/50 bg-white/90 text-[#211e1a] shadow-sm backdrop-blur-sm transition duration-300 group-hover:bg-[#211e1a] group-hover:text-white">
+            <ArrowUpRight size={15} />
+          </div>
         </Link>
 
-        {/* Course Content */}
-
-        <div className="flex flex-1 flex-col p-5">
+        {/* Course content */}
+        <div className="flex flex-1 flex-col px-5 pb-5 pt-5">
           <Link
             href={`/courses/${courseId}`}
             className="block"
           >
-            <h3
-              className={`font-special line-clamp-2 text-[29px] font-medium italic leading-[1.05] tracking-[-0.025em] text-[#211e1a] transition duration-300 hover:text-[#9b7938]`}
-            >
+            <h3 className="font-special line-clamp-2 min-h-[61px] text-[29px] font-normal italic leading-[1.02] tracking-[-0.035em] text-[#211e1a] transition duration-300 hover:text-[#9b7938] sm:text-[31px]">
               {course?.title ||
                 "Untitled Course"}
             </h3>
@@ -487,19 +460,23 @@ function CourseCard({
           </p>
 
           {/* Price */}
+          <div className="mt-5 flex items-end justify-between gap-4 border-t border-[#e9e0d7] pt-4">
+            <div>
+              <p className="text-[8px] font-semibold uppercase tracking-[0.17em] text-[#998e83]">
+                Course Price
+              </p>
 
-          <div className="mt-5 border-t border-[#eee7df] pt-4">
-            <p className="text-[9px] font-medium uppercase tracking-[0.14em] text-[#998e83]">
-              Course Price
-            </p>
+              <p className="mt-1.5 text-[19px] font-semibold tracking-[-0.02em] text-[#211e1a]">
+                {formatPrice(price)}
+              </p>
+            </div>
 
-            <p className="mt-1 text-[18px] font-semibold text-[#211e1a]">
-              {formatPrice(price)}
-            </p>
+            <span className="pb-1 text-[9px] font-semibold uppercase tracking-[0.14em] text-[#a98745]">
+              Online Course
+            </span>
           </div>
 
           {/* Actions */}
-
           <div className="mt-auto grid grid-cols-2 gap-2.5 pt-5">
             <button
               type="button"
@@ -509,20 +486,26 @@ function CourseCard({
               aria-label={`Enroll in ${
                 course?.title || "course"
               }`}
-              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-[#211e1a] px-3 text-[9px] font-semibold uppercase tracking-[0.11em] text-white transition duration-300 hover:bg-[#a98745]"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[4px] border border-[#211e1a] bg-[#211e1a] px-3 text-[9px] font-semibold uppercase tracking-[0.1em] text-white transition duration-300 hover:-translate-y-0.5 hover:border-[#a98745] hover:bg-[#a98745]"
             >
-              <GraduationCap size={14} />
+              <GraduationCap
+                size={14}
+                strokeWidth={1.8}
+              />
 
               {enrollButtonText}
             </button>
 
             <Link
               href={`/courses/${courseId}`}
-              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border border-[#d9cfc4] bg-white px-3 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#211e1a] transition duration-300 hover:border-[#211e1a] hover:bg-[#211e1a] hover:text-white"
+              className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[4px] border border-[#d4c9bd] bg-[#fffdf9] px-3 text-[9px] font-semibold uppercase tracking-[0.11em] text-[#211e1a] transition duration-300 hover:-translate-y-0.5 hover:border-[#211e1a] hover:bg-[#211e1a] hover:text-white"
             >
               Details
 
-              <ArrowRight size={12} />
+              <ArrowRight
+                size={13}
+                strokeWidth={1.8}
+              />
             </Link>
           </div>
         </div>
@@ -540,22 +523,19 @@ function CourseCard({
 function EmptyCourses() {
   return (
     <div className="mx-auto max-w-[1120px] px-5">
-      <div className="rounded-[24px] border border-[#e5dcd1] bg-white/70 px-6 py-14 text-center">
+      <div className="rounded-[6px] border border-[#ddd3c7] bg-[#fffdf9] px-6 py-14 text-center shadow-[0_12px_32px_rgba(45,35,24,0.04)]">
         <BookOpen
           size={34}
           className="mx-auto text-[#a98745]"
           strokeWidth={1.4}
         />
 
-        <h3
-          className={`font-special mt-4 text-[31px] font-medium italic`}
-        >
+        <h3 className="font-special mt-4 text-[31px] font-normal italic text-[#211e1a]">
           No Courses Available
         </h3>
 
         <p className="mt-2 text-[13px] text-[#756b61]">
-          Featured art courses will appear
-          here.
+          Featured art courses will appear here.
         </p>
       </div>
     </div>
@@ -570,27 +550,33 @@ function EmptyCourses() {
 
 function CoursesLoading() {
   return (
-    <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-6 px-5 md:grid-cols-2 lg:grid-cols-3">
+    <div className="mx-auto grid max-w-[1120px] grid-cols-1 gap-7 px-5 md:grid-cols-2 lg:grid-cols-3">
       {[1, 2, 3].map((item) => (
         <div
           key={item}
-          className="animate-pulse overflow-hidden rounded-[24px] border border-[#e5dcd1] bg-white"
+          className="animate-pulse overflow-hidden rounded-[6px] border border-[#ddd3c7] bg-[#fffdf9]"
         >
-          <div className="aspect-[4/3] bg-[#e7ddd2]" />
+          <div className="aspect-[16/11] bg-[#e7ddd2]" />
 
           <div className="p-5">
-            <div className="h-7 w-4/5 rounded bg-[#e7ddd2]" />
+            <div className="h-7 w-4/5 rounded-[3px] bg-[#e7ddd2]" />
 
-            <div className="mt-4 h-3 w-full rounded bg-[#e7ddd2]" />
+            <div className="mt-3 h-7 w-3/5 rounded-[3px] bg-[#e7ddd2]" />
 
-            <div className="mt-2 h-3 w-4/5 rounded bg-[#e7ddd2]" />
+            <div className="mt-5 h-3 w-full rounded-[3px] bg-[#e7ddd2]" />
 
-            <div className="mt-6 h-5 w-24 rounded bg-[#e7ddd2]" />
+            <div className="mt-2 h-3 w-4/5 rounded-[3px] bg-[#e7ddd2]" />
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <div className="h-11 rounded-full bg-[#e7ddd2]" />
+            <div className="mt-6 border-t border-[#eee7df] pt-4">
+              <div className="h-3 w-20 rounded-[3px] bg-[#e7ddd2]" />
 
-              <div className="h-11 rounded-full bg-[#e7ddd2]" />
+              <div className="mt-2 h-6 w-28 rounded-[3px] bg-[#e7ddd2]" />
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <div className="h-11 rounded-[4px] bg-[#e7ddd2]" />
+
+              <div className="h-11 rounded-[4px] bg-[#e7ddd2]" />
             </div>
           </div>
         </div>
