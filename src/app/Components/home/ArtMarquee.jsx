@@ -36,7 +36,6 @@ export default function ArtMarquee() {
     <section
       aria-label="Art platform logos"
       className="
-        group
         relative
         overflow-hidden
         bg-[#f7f3ee]
@@ -53,12 +52,12 @@ export default function ArtMarquee() {
           inset-y-0
           left-0
           z-10
-          w-16
+          w-12
           bg-gradient-to-r
           from-[#f7f3ee]
           via-[#f7f3ee]/90
           to-transparent
-          sm:w-32
+          sm:w-28
         "
       />
 
@@ -71,15 +70,16 @@ export default function ArtMarquee() {
           inset-y-0
           right-0
           z-10
-          w-16
+          w-12
           bg-gradient-to-l
           from-[#f7f3ee]
           via-[#f7f3ee]/90
           to-transparent
-          sm:w-32
+          sm:w-28
         "
       />
 
+      {/* Marquee */}
       <div
         className="
           animate-marquee
@@ -87,7 +87,6 @@ export default function ArtMarquee() {
           w-max
           items-center
           will-change-transform
-          group-hover:[animation-play-state:paused]
         "
       >
         {ITEMS.map((logo, index) => (
@@ -100,31 +99,29 @@ export default function ArtMarquee() {
               shrink-0
               items-center
               justify-center
-              px-5
+              px-4
               sm:h-20
               sm:w-44
-              sm:px-7
+              sm:px-6
+              lg:h-24
               lg:w-52
+              lg:px-8
             "
           >
-            <Image
-              src={logo.src}
-              alt={`${logo.name} logo`}
-              width={180}
-              height={80}
-              className="
-                h-full
-                w-full
-                object-contain
-                opacity-70
-                grayscale
-                transition
-                duration-300
-                hover:scale-105
-                hover:opacity-100
-                hover:grayscale-0
-              "
-            />
+            <div className="relative h-full w-full">
+              <Image
+                src={logo.src}
+                alt={`${logo.name} logo`}
+                fill
+                sizes="(max-width: 640px) 144px, (max-width: 1024px) 176px, 208px"
+                quality={100}
+                className="
+                  select-none
+                  object-contain
+                  opacity-100
+                "
+              />
+            </div>
           </div>
         ))}
       </div>

@@ -1,16 +1,7 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-
-import {
-  motion,
-  useInView,
-  useReducedMotion,
-} from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 
 const STATS = [
   {
@@ -20,7 +11,7 @@ const STATS = [
   },
   {
     value: 18,
-    suffix: "",
+    suffix: "+",
     label: "Guided Courses",
   },
   {
@@ -30,7 +21,7 @@ const STATS = [
   },
   {
     value: 8,
-    suffix: "",
+    suffix: "+",
     label: "Years Creating",
   },
 ];
@@ -40,133 +31,145 @@ export default function StudioStats() {
     <section
       id="studio-stats"
       aria-label="Studio highlights"
-      className="relative scroll-mt-28 border-y border-[#e8ddd0]/60 bg-[#f7f3ee] py-10 sm:py-12 lg:py-14"
+      className="
+        relative
+        isolate
+        scroll-mt-28
+        overflow-hidden
+        bg-[#f7f3ee]
+        py-12
+        sm:py-14
+        lg:py-16
+      "
     >
-      <div className="mx-auto grid max-w-[1180px] grid-cols-2 gap-x-5 gap-y-10 px-5 sm:grid-cols-4 sm:gap-0 sm:px-8 lg:px-10">
-        {STATS.map(
-          (stat, index) => (
+      {/* Decorative background */}
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          absolute
+          -left-24
+          top-1/2
+          -z-10
+          h-64
+          w-64
+          -translate-y-1/2
+          rounded-full
+          bg-[#d9b99f]/10
+          blur-3xl
+        "
+      />
+
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          absolute
+          -right-24
+          top-1/2
+          -z-10
+          h-64
+          w-64
+          -translate-y-1/2
+          rounded-full
+          bg-[#c9b8a7]/10
+          blur-3xl
+        "
+      />
+
+      <div className="mx-auto max-w-[1240px] px-5 sm:px-8 lg:px-10">
+        <div
+          className="
+            grid
+            grid-cols-2
+            overflow-hidden
+            rounded-[24px]
+            bg-white/35
+            ring-1
+            ring-[#dfd2c4]/55
+            backdrop-blur-sm
+            sm:grid-cols-4
+            sm:rounded-[28px]
+          "
+        >
+          {STATS.map((stat, index) => (
             <StatItem
               key={stat.label}
               stat={stat}
               index={index}
-              isLast={
-                index ===
-                STATS.length - 1
-              }
             />
-          )
-        )}
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-function StatItem({
-  stat,
-  index,
-  isLast,
-}) {
+function StatItem({ stat, index }) {
   const itemRef = useRef(null);
+  const animationFrameRef = useRef(null);
 
-  const animationFrameRef =
-    useRef(null);
+  const shouldReduceMotion = useReducedMotion();
 
-  const shouldReduceMotion =
-    useReducedMotion();
+  const isInView = useInView(itemRef, {
+    once: true,
+    amount: 0.45,
+  });
 
-  const isInView = useInView(
-    itemRef,
-    {
-      once: true,
-      amount: 0.55,
-    }
-  );
-
-  const [
-    count,
-    setCount,
-  ] = useState(
-    shouldReduceMotion
-      ? stat.value
-      : 0
-  );
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
-    if (!isInView) {
-      return undefined;
-    }
+    if (!isInView) return undefined;
 
     if (shouldReduceMotion) {
       setCount(stat.value);
       return undefined;
     }
 
-    const duration = 1400;
-    const startTime =
-      performance.now();
+    const duration = 1500;
+    const startTime = performance.now();
 
-    const updateCount = (
-      currentTime
-    ) => {
-      const progress = Math.min(
-        (
-          currentTime -
-          startTime
-        ) / duration,
-        1
-      );
+    const animateCount = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
 
-      const easedProgress =
-        1 -
-        Math.pow(
-          1 - progress,
-          3
-        );
+      const easedProgress = 1 - Math.pow(1 - progress, 4);
 
-      setCount(
-        Math.round(
-          stat.value *
-            easedProgress
-        )
-      );
+      setCount(Math.round(stat.value * easedProgress));
 
       if (progress < 1) {
         animationFrameRef.current =
-          requestAnimationFrame(
-            updateCount
-          );
+          requestAnimationFrame(animateCount);
       }
     };
 
     animationFrameRef.current =
-      requestAnimationFrame(
-        updateCount
-      );
+      requestAnimationFrame(animateCount);
 
     return () => {
-      if (
-        animationFrameRef.current
-      ) {
-        cancelAnimationFrame(
-          animationFrameRef.current
-        );
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [
-    isInView,
-    shouldReduceMotion,
-    stat.value,
-  ]);
+  }, [isInView, shouldReduceMotion, stat.value]);
+
+  const borderClasses = [
+    "border-b border-r border-[#dfd2c4]/55 sm:border-b-0",
+    "border-b border-[#dfd2c4]/55 sm:border-b-0 sm:border-r",
+    "border-r border-[#dfd2c4]/55",
+    "",
+  ][index];
 
   return (
     <motion.div
       ref={itemRef}
+      aria-label={`${stat.value}${stat.suffix} ${stat.label}`}
       initial={
         shouldReduceMotion
           ? false
           : {
               opacity: 0,
-              y: 20,
+              y: 18,
             }
       }
       whileInView={{
@@ -175,38 +178,90 @@ function StatItem({
       }}
       viewport={{
         once: true,
-        amount: 0.55,
+        amount: 0.45,
       }}
       transition={{
-        delay:
-          shouldReduceMotion
-            ? 0
-            : index * 0.08,
-
-        duration: 0.6,
-
-        ease: [
-          0.22,
-          1,
-          0.36,
-          1,
-        ],
+        delay: shouldReduceMotion ? 0 : index * 0.09,
+        duration: 0.65,
+        ease: [0.22, 1, 0.36, 1],
       }}
-      className={`relative flex flex-col items-center justify-center text-center sm:min-h-[105px] ${
-        !isLast
-          ? "sm:after:absolute sm:after:right-0 sm:after:top-1/2 sm:after:h-14 sm:after:w-px sm:after:-translate-y-1/2 sm:after:bg-[#d9cbbb]/70"
-          : ""
-      }`}
+      className={`
+        group
+        relative
+        flex
+        min-h-[145px]
+        flex-col
+        items-center
+        justify-center
+        px-3
+        py-8
+        text-center
+        transition-colors
+        duration-300
+        sm:min-h-[165px]
+        sm:px-5
+        lg:min-h-[180px]
+        ${borderClasses}
+      `}
     >
-      <p className="font-special text-[42px] font-normal italic leading-none tracking-[-0.04em] text-[#2f2a24] sm:text-[50px] lg:text-[56px]">
-        {count}
+      {/* Small decorative line */}
+      <span
+        aria-hidden="true"
+        className="
+          mb-5
+          h-px
+          w-7
+          bg-[#b07f59]/60
+          transition-all
+          duration-300
+          group-hover:w-10
+        "
+      />
 
-        <span className="text-[#b07f59]">
+      <p
+        aria-hidden="true"
+        className="
+          min-w-[110px]
+          whitespace-nowrap
+          font-special
+          text-[42px]
+          font-normal
+          italic
+          leading-none
+          tracking-[-0.045em]
+          text-[#302922]
+          [font-variant-numeric:tabular-nums]
+          sm:text-[50px]
+          lg:text-[58px]
+        "
+      >
+        {count.toLocaleString()}
+
+        <span
+          className="
+            ml-0.5
+            text-[0.58em]
+            not-italic
+            text-[#b07f59]
+          "
+        >
           {stat.suffix}
         </span>
       </p>
 
-      <p className="mt-3 text-[9px] font-semibold uppercase tracking-[0.25em] text-[#8f6b52]/85 sm:text-[10px]">
+      <p
+        className="
+          mt-4
+          whitespace-nowrap
+          text-[9px]
+          font-semibold
+          uppercase
+          tracking-[0.22em]
+          text-[#806653]
+          sm:text-[10px]
+          sm:tracking-[0.25em]
+        "
+      >
         {stat.label}
       </p>
     </motion.div>
