@@ -352,8 +352,8 @@ export default function HeroSection() {
             inset-0
             z-[1]
             bg-gradient-to-r
-            from-[#f7f1e8]/75
-            via-[#f7f1e8]/38
+            from-[#f7f1e8]/65
+            via-[#f7f1e8]/28
             to-transparent
             md:hidden
           "
