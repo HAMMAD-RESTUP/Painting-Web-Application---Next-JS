@@ -263,9 +263,6 @@ export default function HeroSection() {
                   w-full
                   object-cover
                   object-[66%_center]
-                  brightness-[1.02]
-                  contrast-[1.02]
-                  saturate-[1.04]
 
                   sm:object-[64%_center]
                   md:hidden
@@ -339,7 +336,7 @@ export default function HeroSection() {
           "
         />
 
-        {/* Mobile Transparent Dark Overlay */}
+        {/* Mobile Left Overlay */}
         <div
           aria-hidden="true"
           className="
@@ -348,25 +345,26 @@ export default function HeroSection() {
             inset-0
             z-[1]
             bg-gradient-to-r
-            from-black/55
-            via-black/25
+            from-[#f7f1e8]/65
+            via-[#f7f1e8]/24
             to-transparent
             md:hidden
           "
         />
 
-        {/* Mobile Top Transparent Support */}
+        {/* Mobile Text Support Overlay */}
         <div
           aria-hidden="true"
           className="
             pointer-events-none
             absolute
-            inset-x-0
+            left-0
             top-0
             z-[1]
-            h-[20%]
-            bg-gradient-to-b
-            from-black/15
+            h-full
+            w-[65%]
+            bg-gradient-to-r
+            from-[#f7f1e8]/30
             to-transparent
             md:hidden
           "
@@ -391,7 +389,7 @@ export default function HeroSection() {
           "
         />
 
-        {/* Mobile Bottom Transparent Gradient */}
+        {/* Mobile Bottom Gradient */}
         <div
           aria-hidden="true"
           className="
@@ -400,10 +398,9 @@ export default function HeroSection() {
             inset-x-0
             bottom-0
             z-[1]
-            h-[30%]
+            h-[12%]
             bg-gradient-to-t
-            from-black/30
-            via-black/10
+            from-[#f7f1e8]/20
             to-transparent
             md:hidden
           "
@@ -572,16 +569,11 @@ export default function HeroSection() {
                       block
                       overflow-hidden
                       text-[54px]
-                      text-white
-                      drop-shadow-[0_3px_15px_rgba(0,0,0,0.30)]
+                      text-[#3b2f2a]
 
                       min-[375px]:text-[59px]
                       sm:text-[76px]
-
                       md:text-[88px]
-                      md:text-[#3b2f2a]
-                      md:drop-shadow-none
-
                       lg:text-[100px]
                       xl:text-[112px]
                     "
@@ -602,16 +594,11 @@ export default function HeroSection() {
                       block
                       overflow-hidden
                       text-[54px]
-                      text-[#edc08c]
-                      drop-shadow-[0_3px_15px_rgba(0,0,0,0.30)]
+                      text-[#b07f59]
 
                       min-[375px]:text-[59px]
                       sm:text-[76px]
-
                       md:text-[88px]
-                      md:text-[#b07f59]
-                      md:drop-shadow-none
-
                       lg:text-[100px]
                       xl:text-[112px]
                     "
@@ -656,8 +643,7 @@ export default function HeroSection() {
                     h-px
                     w-[78px]
                     origin-left
-                    bg-[#edc08c]
-                    md:bg-[#b07f59]
+                    bg-[#b07f59]
                   "
                 />
 
@@ -684,15 +670,12 @@ export default function HeroSection() {
                     max-w-[480px]
                     text-[14px]
                     leading-7
-                    text-white/90
-                    drop-shadow-[0_2px_10px_rgba(0,0,0,0.40)]
+                    text-[#433931]
 
                     sm:max-w-[610px]
                     sm:text-[15px]
 
                     md:text-[16px]
-                    md:text-[#433931]
-                    md:drop-shadow-none
 
                     lg:text-[17px]
                     lg:leading-8
@@ -796,34 +779,27 @@ export default function HeroSection() {
                   gap-2
                   rounded-md
                   border
-                  border-white/45
-                  bg-black/20
+                  border-[#6f5543]/30
+                  bg-[#fffdfb]/88
                   px-7
                   text-[10px]
                   font-semibold
                   uppercase
                   tracking-[0.15em]
-                  text-white
-                  shadow-[0_8px_20px_rgba(0,0,0,0.12)]
+                  text-[#51473f]
+                  shadow-[0_8px_20px_rgba(75,50,35,0.08)]
                   backdrop-blur-sm
                   transition
                   duration-300
 
-                  hover:border-white/70
-                  hover:bg-black/35
+                  hover:border-[#b07f59]
+                  hover:bg-[#f8efe8]
+                  hover:text-[#b07f59]
 
                   sm:w-auto
                   sm:px-8
 
-                  md:border-[#6f5543]/30
-                  md:bg-[#fffdfb]/88
                   md:text-[11px]
-                  md:text-[#51473f]
-                  md:shadow-[0_8px_20px_rgba(75,50,35,0.08)]
-
-                  md:hover:border-[#b07f59]
-                  md:hover:bg-[#f8efe8]
-                  md:hover:text-[#b07f59]
                 "
               >
                 About the Artist
